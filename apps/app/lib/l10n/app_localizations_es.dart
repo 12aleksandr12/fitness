@@ -80,6 +80,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get myBookings => 'Mis reservas';
 
   @override
+  String get noUpcomingBookings => 'No hay reservas próximas';
+
+  @override
+  String get statusBooked => 'Reservado';
+
+  @override
+  String get statusCancelled => 'Cancelado';
+
+  @override
   String get balanceHistory => 'Historial del saldo';
 
   @override
@@ -107,6 +116,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get classType => 'Tipo';
+
+  @override
+  String get trainer => 'Entrenador';
+
+  @override
+  String get noTrainer => 'Sin entrenador';
+
+  @override
+  String get trainerNotFound => 'Esta persona no está en el estudio';
 
   @override
   String get date => 'Fecha';
@@ -243,19 +261,29 @@ class AppLocalizationsEs extends AppLocalizations {
   String get defaultRoleName => 'Recepción';
 
   @override
-  String get sessionLog => 'Registro de la clase';
+  String get sessionLog => 'Historial de reservas';
 
   @override
   String get sessionLogEmpty => 'Aún no hay entradas';
 
   @override
-  String logBooked(String actor, String target) {
-    return '$actor reservó: $target';
+  String logBookedSelf(String name) {
+    return '$name reservó';
   }
 
   @override
-  String logCancelled(String actor, String target) {
-    return '$actor canceló: $target';
+  String logCancelledSelf(String name) {
+    return '$name canceló';
+  }
+
+  @override
+  String logCheckedInSelf(String name) {
+    return '$name — visita marcada';
+  }
+
+  @override
+  String logBooked(String actor, String target) {
+    return '$actor reservó a: $target';
   }
 
   @override
@@ -275,4 +303,67 @@ class AppLocalizationsEs extends AppLocalizations {
   String cancelOtherMessage(String name) {
     return '$name será quitado de esta clase.';
   }
+
+  @override
+  String get commentOptional => 'Comentario (opcional)';
+
+  @override
+  String get register => 'Registro';
+
+  @override
+  String get registerHint => 'Necesitas el token del correo de invitación.';
+
+  @override
+  String get inviteToken => 'Token de invitación';
+
+  @override
+  String get confirmPassword => 'Contraseña otra vez';
+
+  @override
+  String get passwordsMismatch => 'Las contraseñas no coinciden';
+
+  @override
+  String get passwordMinLength =>
+      'La contraseña debe tener al menos 8 caracteres';
+
+  @override
+  String get checkRegisterFields => 'Completa el token y el nombre';
+
+  @override
+  String get registerFailed => 'No se pudo registrar';
+
+  @override
+  String get invalidInvite => 'La invitación no es válida o ya se usó';
+
+  @override
+  String get emailTaken => 'Este correo ya está registrado';
+
+  @override
+  String get backToLogin => 'Volver al acceso';
+
+  @override
+  String get inviteUser => 'Invitar';
+
+  @override
+  String get inviteSent => 'Invitación enviada. Token:';
+
+  @override
+  String get copyToken => 'Copiar token';
+
+  @override
+  String get role => 'Rol';
+
+  @override
+  String get noRoles => 'No hay roles';
+
+  @override
+  String get cancelTooLate =>
+      'Ya es tarde para cancelar — dentro del plazo del estudio';
+
+  @override
+  String get notCancellable =>
+      'Esta reserva no se puede cancelar (ya se marcó la visita)';
+
+  @override
+  String get cancelFailed => 'No se pudo quitar de la clase';
 }

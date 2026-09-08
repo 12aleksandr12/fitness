@@ -12,10 +12,23 @@ final weekSessionsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) as
   if (auth == null) {
     return [];
   }
-  final now = DateTime.now().toUtc();
-  final from = DateTime.utc(now.year, now.month, now.day);
+  final now = DateTime.now();
+  final from = DateTime(now.year, now.month, now.day);
   return ref.read(studioRepositoryProvider).sessions(
         from: from,
         to: from.add(const Duration(days: 7)),
       );
 });
+
+final myBookingsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final auth = await ref.watch(authControllerProvider.future);
+  if (auth == null) {
+    return [];
+  }
+  return ref.read(studioRepositoryProvider).myBookings();
+});
+
+void invalidateStudioWeek(WidgetRef ref) {
+  ref.invalidate(weekSessionsProvider);
+  ref.invalidate(myBookingsProvider);
+}

@@ -1,5 +1,6 @@
+import 'package:fitness_app/core/api_error.dart';
 import 'package:fitness_app/core/confirm_delete.dart';
-import 'package:fitness_app/core/logout_button.dart';
+import 'package:fitness_app/core/language_picker.dart';
 import 'package:fitness_app/core/locale_controller.dart';
 import 'package:fitness_app/core/permissions.dart';
 import 'package:fitness_app/core/require_permission.dart';
@@ -34,7 +35,7 @@ class ScheduleScreen extends ConsumerWidget {
               onPressed: () => showSessionEditor(context: context, ref: ref),
             ),
           ),
-          const LogoutButton(),
+          const AppBarActions(),
         ],
       ),
       body: async.when(
@@ -46,7 +47,7 @@ class ScheduleScreen extends ConsumerWidget {
               Text(l10n.scheduleLoadFailed),
               const SizedBox(height: 12),
               FilledButton(
-                onPressed: () => ref.invalidate(weekSessionsProvider),
+                onPressed: () => invalidateStudioWeek(ref),
                 child: Text(l10n.retry),
               ),
             ],
@@ -198,83 +199,109 @@ class SessionTile extends ConsumerWidget {
                 runSpacing: 4,
                 children: [
                   for (final b in bookings)
-                    InputChip(
-                      visualDensity: VisualDensity.compact,
-                      avatar: UserAvatar(
-                        userId: (b['user'] as Map<String, dynamic>?)?['id'] as String? ?? '',
-                        name: (b['user'] as Map<String, dynamic>?)?['name'] as String? ?? '',
-                        hasPhoto: (b['user'] as Map<String, dynamic>?)?['hasPhoto'] == true,
-                        radius: 12,
-                      ),
-                      label: Text((b['user'] as Map<String, dynamic>?)?['name'] as String? ?? ''),
-                      onDeleted: canCancelOthers && b['status'] == 'booked'
-                          ? () async {
-                              final name = (b['user'] as Map<String, dynamic>?)?['name'] as String? ?? '';
-                              final sure = await confirmDelete(
-                                context,
-                                title: l10n.cancelOtherTitle,
-                                message: l10n.cancelOtherMessage(name),
-                                confirmLabel: l10n.cancel,
-                              );
-                              if (sure != true) {
-                                return;
-                              }
-                              await ref.read(studioRepositoryProvider).cancel(b['id'] as String);
-                              ref.invalidate(weekSessionsProvider);
-                            }
-                          : null,
-                      onPressed: () {
-                        final id = (b['user'] as Map<String, dynamic>?)?['id'] as String?;
-                        if (id != null) {
-                          context.push('/people/$id');
-                        }
-                      },
+                    SessionPersonChip(
+                      booking: b,
+                      myUserId: user?.userId,
+                      canCancelOthers: canCancelOthers,
                     ),
                 ],
               ),
-            Wrap(
-              spacing: 8,
-              children: [
-                RequirePermission(
-                  slug: Permissions.bookSelf,
-                  child: TextButton(
-                    onPressed: mine.isNotEmpty
-                        ? null
-                        : () async {
-                            await ref.read(studioRepositoryProvider).book(session['id'] as String);
-                            ref.invalidate(weekSessionsProvider);
-                          },
-                    child: Text(l10n.book),
-                  ),
-                ),
-                if (mine.isNotEmpty)
-                  TextButton(
-                    onPressed: () async {
-                      await ref.read(studioRepositoryProvider).cancel(mine.first['id'] as String);
-                      ref.invalidate(weekSessionsProvider);
-                    },
-                    child: Text(l10n.cancel),
-                  ),
-                RequirePermission(
-                  slug: Permissions.checkIn,
-                  child: bookings.isEmpty
-                      ? const SizedBox.shrink()
-                      : TextButton(
-                          onPressed: () async {
-                            final bookedOnly = bookings.where((b) => b['status'] == 'booked');
-                            for (final b in bookedOnly) {
-                              await ref.read(studioRepositoryProvider).checkIn(b['id'] as String);
-                            }
-                            ref.invalidate(weekSessionsProvider);
-                          },
-                          child: Text(l10n.checkIn),
-                        ),
-                ),
-              ],
+            RequirePermission(
+              slug: Permissions.bookSelf,
+              child: TextButton(
+                onPressed: mine.isNotEmpty
+                    ? null
+                    : () async {
+                        await ref.read(studioRepositoryProvider).book(session['id'] as String);
+                        invalidateStudioWeek(ref);
+                      },
+                child: Text(l10n.book),
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class SessionPersonChip extends ConsumerWidget {
+  const SessionPersonChip({
+    super.key,
+    required this.booking,
+    required this.myUserId,
+    required this.canCancelOthers,
+  });
+
+  final Map<String, dynamic> booking;
+  final String? myUserId;
+  final bool canCancelOthers;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final person = booking['user'] as Map<String, dynamic>? ?? {};
+    final name = person['name'] as String? ?? '';
+    final userId = person['id'] as String?;
+    final booked = booking['status'] == 'booked';
+    final attended = booking['status'] == 'attended';
+    final canCancel = booked && (userId == myUserId || canCancelOthers);
+    return InputChip(
+      visualDensity: VisualDensity.compact,
+      tooltip: attended ? l10n.checkIn : l10n.profile,
+      avatar: UserAvatar(
+        userId: userId ?? '',
+        name: name,
+        hasPhoto: person['hasPhoto'] == true,
+        radius: 12,
+      ),
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(name),
+          if (attended) ...[
+            const SizedBox(width: 4),
+            Icon(
+              Icons.check_circle,
+              size: 16,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ],
+        ],
+      ),
+      onPressed: userId == null ? null : () => context.push('/people/$userId'),
+      onDeleted: canCancel
+          ? () async {
+              final comment = await confirmCancel(
+                context,
+                title: l10n.cancelOtherTitle,
+                message: l10n.cancelOtherMessage(name),
+                confirmLabel: l10n.cancel,
+                commentLabel: l10n.commentOptional,
+              );
+              if (comment == null) {
+                return;
+              }
+              try {
+                await ref.read(studioRepositoryProvider).cancel(
+                      booking['id'] as String,
+                      comment: comment.isEmpty ? null : comment,
+                    );
+                invalidateStudioWeek(ref);
+              } catch (e) {
+                if (!context.mounted) {
+                  return;
+                }
+                final code = apiErrorCode(e);
+                final text = switch (code) {
+                  'CANCEL_TOO_LATE' => l10n.cancelTooLate,
+                  'NOT_CANCELLABLE' => l10n.notCancellable,
+                  _ => l10n.cancelFailed,
+                };
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+              }
+            }
+          : null,
     );
   }
 }

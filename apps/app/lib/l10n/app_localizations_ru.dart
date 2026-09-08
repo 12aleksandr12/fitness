@@ -80,6 +80,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get myBookings => 'Мои записи';
 
   @override
+  String get noUpcomingBookings => 'Нет предстоящих записей';
+
+  @override
+  String get statusBooked => 'Записан';
+
+  @override
+  String get statusCancelled => 'Отменено';
+
+  @override
   String get balanceHistory => 'История баланса';
 
   @override
@@ -107,6 +116,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get classType => 'Тип';
+
+  @override
+  String get trainer => 'Тренер';
+
+  @override
+  String get noTrainer => 'Без тренера';
+
+  @override
+  String get trainerNotFound => 'Этого человека нет в студии';
 
   @override
   String get date => 'Дата';
@@ -241,24 +259,34 @@ class AppLocalizationsRu extends AppLocalizations {
   String get defaultRoleName => 'Ресепшен';
 
   @override
-  String get sessionLog => 'Журнал занятия';
+  String get sessionLog => 'История записи';
 
   @override
   String get sessionLogEmpty => 'Пока нет записей';
 
   @override
-  String logBooked(String actor, String target) {
-    return '$actor записался: $target';
+  String logBookedSelf(String name) {
+    return '$name: запись';
   }
 
   @override
-  String logCancelled(String actor, String target) {
-    return '$actor отменил запись: $target';
+  String logCancelledSelf(String name) {
+    return '$name: отмена записи';
+  }
+
+  @override
+  String logCheckedInSelf(String name) {
+    return '$name: визит отмечен';
+  }
+
+  @override
+  String logBooked(String actor, String target) {
+    return '$actor: запись для $target';
   }
 
   @override
   String logCancelledOther(String actor, String target) {
-    return '$actor снял с занятия: $target';
+    return '$actor: снятие $target';
   }
 
   @override
@@ -273,4 +301,65 @@ class AppLocalizationsRu extends AppLocalizations {
   String cancelOtherMessage(String name) {
     return '$name будет снят с этого занятия.';
   }
+
+  @override
+  String get commentOptional => 'Комментарий (необязательно)';
+
+  @override
+  String get register => 'Регистрация';
+
+  @override
+  String get registerHint => 'Нужен токен из письма-приглашения.';
+
+  @override
+  String get inviteToken => 'Токен приглашения';
+
+  @override
+  String get confirmPassword => 'Пароль ещё раз';
+
+  @override
+  String get passwordsMismatch => 'Пароли не совпадают';
+
+  @override
+  String get passwordMinLength => 'Пароль — минимум 8 символов';
+
+  @override
+  String get checkRegisterFields => 'Заполните токен и имя';
+
+  @override
+  String get registerFailed => 'Не удалось зарегистрироваться';
+
+  @override
+  String get invalidInvite =>
+      'Приглашение недействительно или уже использовано';
+
+  @override
+  String get emailTaken => 'Этот email уже зарегистрирован';
+
+  @override
+  String get backToLogin => 'Ко входу';
+
+  @override
+  String get inviteUser => 'Пригласить';
+
+  @override
+  String get inviteSent => 'Приглашение отправлено. Токен:';
+
+  @override
+  String get copyToken => 'Скопировать токен';
+
+  @override
+  String get role => 'Роль';
+
+  @override
+  String get noRoles => 'Нет ролей';
+
+  @override
+  String get cancelTooLate => 'Уже поздно отменять — меньше окна отмены студии';
+
+  @override
+  String get notCancellable => 'Эту запись нельзя отменить (уже отмечен визит)';
+
+  @override
+  String get cancelFailed => 'Не удалось снять с занятия';
 }

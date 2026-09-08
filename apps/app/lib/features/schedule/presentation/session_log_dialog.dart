@@ -45,7 +45,7 @@ class _SessionLogDialog extends ConsumerWidget {
                       dense: true,
                       contentPadding: EdgeInsets.zero,
                       title: Text(_line(l10n, row)),
-                      subtitle: Text(fmt.format(DateTime.parse(row['createdAt'] as String).toLocal())),
+                      subtitle: Text(_subtitle(fmt, row)),
                     ),
                 ],
               ),
@@ -60,17 +60,29 @@ class _SessionLogDialog extends ConsumerWidget {
   }
 }
 
+String _subtitle(DateFormat fmt, Map<String, dynamic> row) {
+  final when = fmt.format(DateTime.parse(row['createdAt'] as String).toLocal());
+  final comment = (row['comment'] as String?)?.trim();
+  if (comment == null || comment.isEmpty) {
+    return when;
+  }
+  return '$when\n$comment';
+}
+
 String _line(AppLocalizations l10n, Map<String, dynamic> row) {
-  final actor = (row['actor'] as Map<String, dynamic>?)?['name'] as String? ?? '';
-  final target = (row['target'] as Map<String, dynamic>?)?['name'] as String? ?? actor;
+  final actorMap = row['actor'] as Map<String, dynamic>?;
+  final targetMap = row['target'] as Map<String, dynamic>?;
+  final actor = actorMap?['name'] as String? ?? '';
+  final target = targetMap?['name'] as String? ?? actor;
+  final same = (actorMap?['id'] ?? actor) == (targetMap?['id'] ?? target);
   switch (row['action'] as String?) {
     case 'cancelled_other':
       return l10n.logCancelledOther(actor, target);
     case 'cancelled':
-      return l10n.logCancelled(actor, target);
+      return same ? l10n.logCancelledSelf(actor) : l10n.logCancelledOther(actor, target);
     case 'checked_in':
-      return l10n.logCheckedIn(actor, target);
+      return same ? l10n.logCheckedInSelf(actor) : l10n.logCheckedIn(actor, target);
     default:
-      return l10n.logBooked(actor, target);
+      return same ? l10n.logBookedSelf(actor) : l10n.logBooked(actor, target);
   }
 }

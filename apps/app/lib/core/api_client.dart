@@ -63,7 +63,12 @@ Dio createDio(TokenStore tokens) {
       },
       onError: (error, handler) async {
         final path = error.requestOptions.path;
-        if (error.response?.statusCode != 401 || path.contains('/auth/refresh') || path.contains('/auth/login')) {
+        if (
+          error.response?.statusCode != 401 ||
+          path.contains('/auth/refresh') ||
+          path.contains('/auth/login') ||
+          path.contains('/auth/register')
+        ) {
           return handler.next(error);
         }
         try {

@@ -1,6 +1,6 @@
 import 'package:fitness_app/core/confirm_delete.dart';
-import 'package:fitness_app/core/logout_button.dart';
-import 'package:fitness_app/features/schedule/application/schedule_providers.dart';
+import 'package:fitness_app/core/language_picker.dart';
+import 'package:fitness_app/features/roles/application/roles_providers.dart';
 import 'package:fitness_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,8 +24,8 @@ class _RolesScreenState extends ConsumerState<RolesScreen> {
   }
 
   Future<void> _reload() async {
-    final repo = ref.read(studioRepositoryProvider);
-    final roles = await repo.roles();
+    final repo = ref.read(rolesRepositoryProvider);
+    final roles = await repo.list();
     final perms = await repo.permissionCatalog();
     setState(() {
       _roles = roles;
@@ -46,7 +46,7 @@ class _RolesScreenState extends ConsumerState<RolesScreen> {
             icon: const Icon(Icons.add),
             onPressed: () => _edit(null),
           ),
-          const LogoutButton(),
+          const AppBarActions(),
         ],
       ),
       body: _loading
@@ -123,7 +123,7 @@ class _RolesScreenState extends ConsumerState<RolesScreen> {
                       if (sure != true || !ctx.mounted) {
                         return;
                       }
-                      await ref.read(studioRepositoryProvider).deleteRole(role['id'] as String);
+                      await ref.read(rolesRepositoryProvider).delete(role['id'] as String);
                       if (ctx.mounted) {
                         Navigator.pop(ctx, _RoleDialogResult.deleted);
                       }
@@ -147,9 +147,9 @@ class _RolesScreenState extends ConsumerState<RolesScreen> {
     }
     final slugs = selected.toList();
     if (role == null) {
-      await ref.read(studioRepositoryProvider).createRole(nameCtrl.text.trim(), slugs);
+      await ref.read(rolesRepositoryProvider).create(nameCtrl.text.trim(), slugs);
     } else {
-      await ref.read(studioRepositoryProvider).updateRole(role['id'] as String, slugs);
+      await ref.read(rolesRepositoryProvider).update(role['id'] as String, slugs);
     }
     await _reload();
   }

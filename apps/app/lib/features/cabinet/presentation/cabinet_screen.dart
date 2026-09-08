@@ -1,10 +1,10 @@
 import 'package:fitness_app/core/app_languages.dart';
-import 'package:fitness_app/core/logout_button.dart';
 import 'package:fitness_app/core/language_picker.dart';
 import 'package:fitness_app/core/locale_controller.dart';
 import 'package:fitness_app/core/user_avatar.dart';
 import 'package:fitness_app/features/auth/application/auth_controller.dart';
 import 'package:fitness_app/features/schedule/application/schedule_providers.dart';
+import 'package:fitness_app/features/users/application/users_providers.dart';
 import 'package:fitness_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,22 +19,17 @@ class CabinetScreen extends ConsumerWidget {
     final me = ref.watch(authControllerProvider).valueOrNull;
     final l10n = AppLocalizations.of(context);
     final locale = ref.watch(localeControllerProvider).valueOrNull ?? const Locale('ru');
+    final bookings = _upcomingMine(ref.watch(myBookingsProvider).valueOrNull ?? []);
+    final passes = ref.watch(myPassesProvider);
+    final ledger = ref.watch(myLedgerProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.cabinet), actions: const [LogoutButton()]),
-      body: FutureBuilder(
-        future: Future.wait([
-          ref.read(studioRepositoryProvider).myPasses(),
-          ref.read(studioRepositoryProvider).myBookings(),
-          ref.read(studioRepositoryProvider).myLedger(),
-        ]),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final passes = snapshot.data![0];
-          final bookings = snapshot.data![1];
-          final ledger = snapshot.data![2];
-          final visits = passes.fold<int>(
+      appBar: AppBar(title: Text(l10n.cabinet), actions: const [AppBarActions()]),
+      body: passes.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(child: Text(l10n.noData)),
+        data: (passRows) {
+          final ledgerRows = ledger.valueOrNull ?? [];
+          final visits = passRows.fold<int>(
             0,
             (sum, p) => sum + (p['remainingVisits'] as int? ?? 0),
           );
@@ -56,12 +51,12 @@ class CabinetScreen extends ConsumerWidget {
                 subtitle: Text(nativeNameFor(locale)),
                 onTap: () => showLanguagePicker(context, ref),
               ),
-              const SizedBox(height: 12),
-              const Align(alignment: Alignment.centerLeft, child: LogoutButton(filled: true)),
               const SizedBox(height: 16),
               Text(l10n.remainingVisits(visits), style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: 16),
               Text(l10n.myBookings, style: Theme.of(context).textTheme.titleMedium),
+              if (bookings.isEmpty)
+                ListTile(title: Text(l10n.noUpcomingBookings)),
               for (final b in bookings)
                 ListTile(
                   title: Text(
@@ -72,12 +67,12 @@ class CabinetScreen extends ConsumerWidget {
                     }(),
                   ),
                   subtitle: Text(
-                    '${b['status']} · ${fmt.format(DateTime.parse((b['session'] as Map<String, dynamic>)['startsAt'] as String).toLocal())}',
+                    '${_bookingStatus(b['status'] as String?, l10n)} · ${fmt.format(DateTime.parse((b['session'] as Map<String, dynamic>)['startsAt'] as String).toLocal())}',
                   ),
                 ),
               const SizedBox(height: 16),
               Text(l10n.balanceHistory, style: Theme.of(context).textTheme.titleMedium),
-              for (final e in ledger)
+              for (final e in ledgerRows)
                 ListTile(
                   title: Text('${e['type']} · ${e['visits']}'),
                   subtitle: Text(e['note']?.toString() ?? ''),
@@ -88,4 +83,33 @@ class CabinetScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+List<Map<String, dynamic>> _upcomingMine(List<Map<String, dynamic>> rows) {
+  final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  final mine = rows.where((b) {
+    final status = b['status'];
+    if (status != 'booked' && status != 'attended') {
+      return false;
+    }
+    final raw = (b['session'] as Map<String, dynamic>?)?['startsAt'] as String?;
+    if (raw == null) {
+      return false;
+    }
+    return !DateTime.parse(raw).toLocal().isBefore(today);
+  }).toList();
+  mine.sort((a, b) {
+    final sa = DateTime.parse((a['session'] as Map<String, dynamic>)['startsAt'] as String);
+    final sb = DateTime.parse((b['session'] as Map<String, dynamic>)['startsAt'] as String);
+    return sa.compareTo(sb);
+  });
+  return mine;
+}
+
+String _bookingStatus(String? status, AppLocalizations l10n) {
+  return switch (status) {
+    'attended' => l10n.checkIn,
+    'cancelled' => l10n.statusCancelled,
+    _ => l10n.statusBooked,
+  };
 }

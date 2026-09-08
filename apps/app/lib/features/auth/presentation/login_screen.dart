@@ -3,6 +3,7 @@ import 'package:fitness_app/features/auth/application/auth_controller.dart';
 import 'package:fitness_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -35,13 +36,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Align(
+                const Align(
                   alignment: Alignment.centerRight,
-                  child: IconButton(
-                    tooltip: l10n.language,
-                    onPressed: () => showLanguagePicker(context, ref),
-                    icon: const Icon(Icons.language),
-                  ),
+                  child: LanguageButton(),
                 ),
                 Text(l10n.appTitle, style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 24),
@@ -79,6 +76,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : Text(l10n.login),
+                ),
+                TextButton(
+                  onPressed: auth.isLoading ? null : () => context.go('/register'),
+                  child: Text(l10n.register),
                 ),
               ],
             ),

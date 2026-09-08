@@ -1,6 +1,7 @@
 import 'package:fitness_app/core/app_shell.dart';
 import 'package:fitness_app/features/auth/application/auth_controller.dart';
 import 'package:fitness_app/features/auth/presentation/login_screen.dart';
+import 'package:fitness_app/features/auth/presentation/register_screen.dart';
 import 'package:fitness_app/features/cabinet/presentation/cabinet_screen.dart';
 import 'package:fitness_app/features/clients/presentation/clients_screen.dart';
 import 'package:fitness_app/features/profile/presentation/profile_screen.dart';
@@ -18,22 +19,26 @@ final routerProvider = Provider<GoRouter>((ref) {
     navigatorKey: _rootKey,
     initialLocation: '/schedule',
     redirect: (context, state) {
-      final loggingIn = state.uri.path == '/login';
+      final publicAuth = state.uri.path == '/login' || state.uri.path == '/register';
       final user = auth.valueOrNull;
       final loading = auth.isLoading && !auth.hasValue && !auth.hasError;
       if (loading) {
         return null;
       }
-      if (user == null && !loggingIn) {
+      if (user == null && !publicAuth) {
         return '/login';
       }
-      if (user != null && loggingIn) {
+      if (user != null && publicAuth) {
         return '/schedule';
       }
       return null;
     },
     routes: [
       GoRoute(path: '/login', builder: (c, s) => const LoginScreen()),
+      GoRoute(
+        path: '/register',
+        builder: (c, s) => RegisterScreen(token: s.uri.queryParameters['token']),
+      ),
       ShellRoute(
         builder: (c, s, child) => AppShell(child: child),
         routes: [

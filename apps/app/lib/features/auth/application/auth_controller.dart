@@ -34,6 +34,14 @@ class AuthController extends AsyncNotifier<AuthUser?> {
     });
   }
 
+  Future<void> register({required String token, required String name, required String password}) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(authRepositoryProvider).register(token: token, name: name, password: password);
+      return ref.read(authRepositoryProvider).me();
+    });
+  }
+
   Future<void> logout() async {
     await ref.read(authRepositoryProvider).logout();
     state = const AsyncData(null);

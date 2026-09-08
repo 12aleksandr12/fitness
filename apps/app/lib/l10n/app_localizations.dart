@@ -244,6 +244,24 @@ abstract class AppLocalizations {
   /// **'Мои записи'**
   String get myBookings;
 
+  /// No description provided for @noUpcomingBookings.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет предстоящих записей'**
+  String get noUpcomingBookings;
+
+  /// No description provided for @statusBooked.
+  ///
+  /// In ru, this message translates to:
+  /// **'Записан'**
+  String get statusBooked;
+
+  /// No description provided for @statusCancelled.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отменено'**
+  String get statusCancelled;
+
   /// No description provided for @balanceHistory.
   ///
   /// In ru, this message translates to:
@@ -297,6 +315,24 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Тип'**
   String get classType;
+
+  /// No description provided for @trainer.
+  ///
+  /// In ru, this message translates to:
+  /// **'Тренер'**
+  String get trainer;
+
+  /// No description provided for @noTrainer.
+  ///
+  /// In ru, this message translates to:
+  /// **'Без тренера'**
+  String get noTrainer;
+
+  /// No description provided for @trainerNotFound.
+  ///
+  /// In ru, this message translates to:
+  /// **'Этого человека нет в студии'**
+  String get trainerNotFound;
 
   /// No description provided for @date.
   ///
@@ -547,7 +583,7 @@ abstract class AppLocalizations {
   /// No description provided for @sessionLog.
   ///
   /// In ru, this message translates to:
-  /// **'Журнал занятия'**
+  /// **'История записи'**
   String get sessionLog;
 
   /// No description provided for @sessionLogEmpty.
@@ -556,22 +592,34 @@ abstract class AppLocalizations {
   /// **'Пока нет записей'**
   String get sessionLogEmpty;
 
+  /// No description provided for @logBookedSelf.
+  ///
+  /// In ru, this message translates to:
+  /// **'{name}: запись'**
+  String logBookedSelf(String name);
+
+  /// No description provided for @logCancelledSelf.
+  ///
+  /// In ru, this message translates to:
+  /// **'{name}: отмена записи'**
+  String logCancelledSelf(String name);
+
+  /// No description provided for @logCheckedInSelf.
+  ///
+  /// In ru, this message translates to:
+  /// **'{name}: визит отмечен'**
+  String logCheckedInSelf(String name);
+
   /// No description provided for @logBooked.
   ///
   /// In ru, this message translates to:
-  /// **'{actor} записался: {target}'**
+  /// **'{actor}: запись для {target}'**
   String logBooked(String actor, String target);
-
-  /// No description provided for @logCancelled.
-  ///
-  /// In ru, this message translates to:
-  /// **'{actor} отменил запись: {target}'**
-  String logCancelled(String actor, String target);
 
   /// No description provided for @logCancelledOther.
   ///
   /// In ru, this message translates to:
-  /// **'{actor} снял с занятия: {target}'**
+  /// **'{actor}: снятие {target}'**
   String logCancelledOther(String actor, String target);
 
   /// No description provided for @logCheckedIn.
@@ -591,6 +639,126 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'{name} будет снят с этого занятия.'**
   String cancelOtherMessage(String name);
+
+  /// No description provided for @commentOptional.
+  ///
+  /// In ru, this message translates to:
+  /// **'Комментарий (необязательно)'**
+  String get commentOptional;
+
+  /// No description provided for @register.
+  ///
+  /// In ru, this message translates to:
+  /// **'Регистрация'**
+  String get register;
+
+  /// No description provided for @registerHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нужен токен из письма-приглашения.'**
+  String get registerHint;
+
+  /// No description provided for @inviteToken.
+  ///
+  /// In ru, this message translates to:
+  /// **'Токен приглашения'**
+  String get inviteToken;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In ru, this message translates to:
+  /// **'Пароль ещё раз'**
+  String get confirmPassword;
+
+  /// No description provided for @passwordsMismatch.
+  ///
+  /// In ru, this message translates to:
+  /// **'Пароли не совпадают'**
+  String get passwordsMismatch;
+
+  /// No description provided for @passwordMinLength.
+  ///
+  /// In ru, this message translates to:
+  /// **'Пароль — минимум 8 символов'**
+  String get passwordMinLength;
+
+  /// No description provided for @checkRegisterFields.
+  ///
+  /// In ru, this message translates to:
+  /// **'Заполните токен и имя'**
+  String get checkRegisterFields;
+
+  /// No description provided for @registerFailed.
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось зарегистрироваться'**
+  String get registerFailed;
+
+  /// No description provided for @invalidInvite.
+  ///
+  /// In ru, this message translates to:
+  /// **'Приглашение недействительно или уже использовано'**
+  String get invalidInvite;
+
+  /// No description provided for @emailTaken.
+  ///
+  /// In ru, this message translates to:
+  /// **'Этот email уже зарегистрирован'**
+  String get emailTaken;
+
+  /// No description provided for @backToLogin.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ко входу'**
+  String get backToLogin;
+
+  /// No description provided for @inviteUser.
+  ///
+  /// In ru, this message translates to:
+  /// **'Пригласить'**
+  String get inviteUser;
+
+  /// No description provided for @inviteSent.
+  ///
+  /// In ru, this message translates to:
+  /// **'Приглашение отправлено. Токен:'**
+  String get inviteSent;
+
+  /// No description provided for @copyToken.
+  ///
+  /// In ru, this message translates to:
+  /// **'Скопировать токен'**
+  String get copyToken;
+
+  /// No description provided for @role.
+  ///
+  /// In ru, this message translates to:
+  /// **'Роль'**
+  String get role;
+
+  /// No description provided for @noRoles.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет ролей'**
+  String get noRoles;
+
+  /// No description provided for @cancelTooLate.
+  ///
+  /// In ru, this message translates to:
+  /// **'Уже поздно отменять — меньше окна отмены студии'**
+  String get cancelTooLate;
+
+  /// No description provided for @notCancellable.
+  ///
+  /// In ru, this message translates to:
+  /// **'Эту запись нельзя отменить (уже отмечен визит)'**
+  String get notCancellable;
+
+  /// No description provided for @cancelFailed.
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось снять с занятия'**
+  String get cancelFailed;
 }
 
 class _AppLocalizationsDelegate

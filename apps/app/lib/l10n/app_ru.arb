@@ -28,6 +28,9 @@
     }
   },
   "myBookings": "Мои записи",
+  "noUpcomingBookings": "Нет предстоящих записей",
+  "statusBooked": "Записан",
+  "statusCancelled": "Отменено",
   "balanceHistory": "История баланса",
   "sessionFallback": "Занятие",
   "newSession": "Новое занятие",
@@ -42,6 +45,9 @@
   "sessionTitle": "Занятие",
   "noClassTypes": "Нет типов занятий",
   "classType": "Тип",
+  "trainer": "Тренер",
+  "noTrainer": "Без тренера",
+  "trainerNotFound": "Этого человека нет в студии",
   "date": "Дата",
   "startTime": "Начало",
   "durationMin": "Длительность, мин",
@@ -103,23 +109,34 @@
     }
   },
   "defaultRoleName": "Ресепшен",
-  "sessionLog": "Журнал занятия",
+  "sessionLog": "История записи",
   "sessionLogEmpty": "Пока нет записей",
-  "logBooked": "{actor} записался: {target}",
+  "logBookedSelf": "{name}: запись",
+  "@logBookedSelf": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "logCancelledSelf": "{name}: отмена записи",
+  "@logCancelledSelf": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "logCheckedInSelf": "{name}: визит отмечен",
+  "@logCheckedInSelf": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "logBooked": "{actor}: запись для {target}",
   "@logBooked": {
     "placeholders": {
       "actor": {"type": "String"},
       "target": {"type": "String"}
     }
   },
-  "logCancelled": "{actor} отменил запись: {target}",
-  "@logCancelled": {
-    "placeholders": {
-      "actor": {"type": "String"},
-      "target": {"type": "String"}
-    }
-  },
-  "logCancelledOther": "{actor} снял с занятия: {target}",
+  "logCancelledOther": "{actor}: снятие {target}",
   "@logCancelledOther": {
     "placeholders": {
       "actor": {"type": "String"},
@@ -135,6 +152,26 @@
   },
   "cancelOtherTitle": "Снять с занятия?",
   "cancelOtherMessage": "{name} будет снят с этого занятия.",
+  "commentOptional": "Комментарий (необязательно)",
+  "register": "Регистрация",
+  "registerHint": "Нужен токен из письма-приглашения.",
+  "inviteToken": "Токен приглашения",
+  "confirmPassword": "Пароль ещё раз",
+  "passwordsMismatch": "Пароли не совпадают",
+  "passwordMinLength": "Пароль — минимум 8 символов",
+  "checkRegisterFields": "Заполните токен и имя",
+  "registerFailed": "Не удалось зарегистрироваться",
+  "invalidInvite": "Приглашение недействительно или уже использовано",
+  "emailTaken": "Этот email уже зарегистрирован",
+  "backToLogin": "Ко входу",
+  "inviteUser": "Пригласить",
+  "inviteSent": "Приглашение отправлено. Токен:",
+  "copyToken": "Скопировать токен",
+  "role": "Роль",
+  "noRoles": "Нет ролей",
+  "cancelTooLate": "Уже поздно отменять — меньше окна отмены студии",
+  "notCancellable": "Эту запись нельзя отменить (уже отмечен визит)",
+  "cancelFailed": "Не удалось снять с занятия",
   "@cancelOtherMessage": {
     "placeholders": {
       "name": {"type": "String"}

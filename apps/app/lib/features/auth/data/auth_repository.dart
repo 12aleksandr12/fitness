@@ -13,7 +13,26 @@ class AuthRepository {
       '/auth/login',
       data: {'email': email, 'password': password},
     );
-    final data = res.data!;
+    await _saveTokens(res.data!);
+  }
+
+  Future<void> register({required String token, required String name, required String password}) async {
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/auth/register',
+      data: {'token': token, 'name': name, 'password': password},
+    );
+    await _saveTokens(res.data!);
+  }
+
+  Future<String> invite({required String email, required String roleId}) async {
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/auth/invite',
+      data: {'email': email, 'roleId': roleId},
+    );
+    return res.data?['token'] as String? ?? '';
+  }
+
+  Future<void> _saveTokens(Map<String, dynamic> data) async {
     await _tokens.save(
       access: data['accessToken'] as String,
       refresh: data['refreshToken'] as String,

@@ -24,6 +24,7 @@ class FitnessApp extends ConsumerWidget {
     final locale = ref.watch(localeControllerProvider).valueOrNull ?? const Locale('ru');
     return MaterialApp.router(
       title: 'Fitness',
+      debugShowCheckedModeBanner: false,
       theme: buildTheme(),
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,

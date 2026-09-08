@@ -80,6 +80,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get myBookings => 'Meine Buchungen';
 
   @override
+  String get noUpcomingBookings => 'Keine anstehenden Buchungen';
+
+  @override
+  String get statusBooked => 'Gebucht';
+
+  @override
+  String get statusCancelled => 'Storniert';
+
+  @override
   String get balanceHistory => 'Kontostand-Verlauf';
 
   @override
@@ -107,6 +116,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get classType => 'Typ';
+
+  @override
+  String get trainer => 'Trainer';
+
+  @override
+  String get noTrainer => 'Kein Trainer';
+
+  @override
+  String get trainerNotFound => 'Diese Person ist nicht im Studio';
 
   @override
   String get date => 'Datum';
@@ -243,19 +261,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get defaultRoleName => 'Empfang';
 
   @override
-  String get sessionLog => 'Kursprotokoll';
+  String get sessionLog => 'Buchungsverlauf';
 
   @override
   String get sessionLogEmpty => 'Noch keine Einträge';
 
   @override
-  String logBooked(String actor, String target) {
-    return '$actor hat gebucht: $target';
+  String logBookedSelf(String name) {
+    return '$name hat gebucht';
   }
 
   @override
-  String logCancelled(String actor, String target) {
-    return '$actor hat storniert: $target';
+  String logCancelledSelf(String name) {
+    return '$name hat storniert';
+  }
+
+  @override
+  String logCheckedInSelf(String name) {
+    return '$name — Visit markiert';
+  }
+
+  @override
+  String logBooked(String actor, String target) {
+    return '$actor hat gebucht: $target';
   }
 
   @override
@@ -275,4 +303,66 @@ class AppLocalizationsDe extends AppLocalizations {
   String cancelOtherMessage(String name) {
     return '$name wird von diesem Kurs abgemeldet.';
   }
+
+  @override
+  String get commentOptional => 'Kommentar (optional)';
+
+  @override
+  String get register => 'Registrierung';
+
+  @override
+  String get registerHint => 'Sie brauchen den Token aus der Einladungsmail.';
+
+  @override
+  String get inviteToken => 'Einladungstoken';
+
+  @override
+  String get confirmPassword => 'Passwort wiederholen';
+
+  @override
+  String get passwordsMismatch => 'Passwörter stimmen nicht überein';
+
+  @override
+  String get passwordMinLength => 'Passwort mindestens 8 Zeichen';
+
+  @override
+  String get checkRegisterFields => 'Token und Name ausfüllen';
+
+  @override
+  String get registerFailed => 'Registrierung fehlgeschlagen';
+
+  @override
+  String get invalidInvite => 'Einladung ungültig oder bereits verwendet';
+
+  @override
+  String get emailTaken => 'Diese E-Mail ist bereits registriert';
+
+  @override
+  String get backToLogin => 'Zur Anmeldung';
+
+  @override
+  String get inviteUser => 'Einladen';
+
+  @override
+  String get inviteSent => 'Einladung gesendet. Token:';
+
+  @override
+  String get copyToken => 'Token kopieren';
+
+  @override
+  String get role => 'Rolle';
+
+  @override
+  String get noRoles => 'Keine Rollen';
+
+  @override
+  String get cancelTooLate =>
+      'Zu spät zum Stornieren — innerhalb der Studiofrist';
+
+  @override
+  String get notCancellable =>
+      'Diese Buchung kann nicht storniert werden (bereits eingecheckt)';
+
+  @override
+  String get cancelFailed => 'Abmeldung vom Kurs fehlgeschlagen';
 }

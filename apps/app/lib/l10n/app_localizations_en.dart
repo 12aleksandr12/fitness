@@ -80,6 +80,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myBookings => 'My bookings';
 
   @override
+  String get noUpcomingBookings => 'No upcoming bookings';
+
+  @override
+  String get statusBooked => 'Booked';
+
+  @override
+  String get statusCancelled => 'Cancelled';
+
+  @override
   String get balanceHistory => 'Balance history';
 
   @override
@@ -107,6 +116,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get classType => 'Type';
+
+  @override
+  String get trainer => 'Trainer';
+
+  @override
+  String get noTrainer => 'No trainer';
+
+  @override
+  String get trainerNotFound => 'This person is not in the studio';
 
   @override
   String get date => 'Date';
@@ -243,19 +261,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get defaultRoleName => 'Reception';
 
   @override
-  String get sessionLog => 'Class log';
+  String get sessionLog => 'Booking history';
 
   @override
   String get sessionLogEmpty => 'No entries yet';
 
   @override
-  String logBooked(String actor, String target) {
-    return '$actor booked: $target';
+  String logBookedSelf(String name) {
+    return '$name booked';
   }
 
   @override
-  String logCancelled(String actor, String target) {
-    return '$actor cancelled: $target';
+  String logCancelledSelf(String name) {
+    return '$name cancelled';
+  }
+
+  @override
+  String logCheckedInSelf(String name) {
+    return '$name — visit marked';
+  }
+
+  @override
+  String logBooked(String actor, String target) {
+    return '$actor booked: $target';
   }
 
   @override
@@ -275,4 +303,65 @@ class AppLocalizationsEn extends AppLocalizations {
   String cancelOtherMessage(String name) {
     return '$name will be removed from this class.';
   }
+
+  @override
+  String get commentOptional => 'Comment (optional)';
+
+  @override
+  String get register => 'Register';
+
+  @override
+  String get registerHint => 'You need the token from the invite email.';
+
+  @override
+  String get inviteToken => 'Invite token';
+
+  @override
+  String get confirmPassword => 'Password again';
+
+  @override
+  String get passwordsMismatch => 'Passwords do not match';
+
+  @override
+  String get passwordMinLength => 'Password must be at least 8 characters';
+
+  @override
+  String get checkRegisterFields => 'Enter the token and a name';
+
+  @override
+  String get registerFailed => 'Could not register';
+
+  @override
+  String get invalidInvite => 'This invite is invalid or already used';
+
+  @override
+  String get emailTaken => 'This email is already registered';
+
+  @override
+  String get backToLogin => 'Back to sign in';
+
+  @override
+  String get inviteUser => 'Invite';
+
+  @override
+  String get inviteSent => 'Invite sent. Token:';
+
+  @override
+  String get copyToken => 'Copy token';
+
+  @override
+  String get role => 'Role';
+
+  @override
+  String get noRoles => 'No roles';
+
+  @override
+  String get cancelTooLate => 'Too late to cancel — inside the studio window';
+
+  @override
+  String get notCancellable =>
+      'This booking cannot be cancelled (already checked in)';
+
+  @override
+  String get cancelFailed => 'Could not remove from the class';
 }

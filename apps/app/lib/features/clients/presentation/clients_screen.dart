@@ -1,6 +1,9 @@
-import 'package:fitness_app/core/logout_button.dart';
+import 'package:fitness_app/core/language_picker.dart';
+import 'package:fitness_app/core/permissions.dart';
+import 'package:fitness_app/core/require_permission.dart';
 import 'package:fitness_app/core/user_avatar.dart';
-import 'package:fitness_app/features/schedule/application/schedule_providers.dart';
+import 'package:fitness_app/features/clients/presentation/invite_dialog.dart';
+import 'package:fitness_app/features/users/application/users_providers.dart';
 import 'package:fitness_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,10 +17,20 @@ class ClientsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).clients),
-        actions: const [LogoutButton()],
+        actions: [
+          RequirePermission(
+            slug: Permissions.manageUsers,
+            child: IconButton(
+              tooltip: AppLocalizations.of(context).inviteUser,
+              onPressed: () => showInviteDialog(context, ref),
+              icon: const Icon(Icons.person_add_outlined),
+            ),
+          ),
+          const AppBarActions(),
+        ],
       ),
       body: FutureBuilder(
-        future: ref.read(studioRepositoryProvider).users(),
+        future: ref.read(usersRepositoryProvider).list(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());

@@ -1,13 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:fitness_app/core/confirm_delete.dart';
-import 'package:fitness_app/core/logout_button.dart';
+import 'package:fitness_app/core/language_picker.dart';
 import 'package:fitness_app/core/permissions.dart';
 import 'package:fitness_app/core/require_permission.dart';
 import 'package:fitness_app/core/user_avatar.dart';
 import 'package:fitness_app/features/auth/application/auth_controller.dart';
 import 'package:fitness_app/features/profile/application/photo_providers.dart';
-import 'package:fitness_app/features/schedule/application/schedule_providers.dart';
+import 'package:fitness_app/features/users/application/users_providers.dart';
 import 'package:fitness_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,7 +52,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       _error = null;
     });
     try {
-      final profile = await ref.read(studioRepositoryProvider).profile(widget.userId);
+      final profile = await ref.read(usersRepositoryProvider).profile(widget.userId);
       if (!mounted) {
         return;
       }
@@ -71,18 +71,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
+  bool get _isSelf => ref.read(authControllerProvider).valueOrNull?.userId == widget.userId;
+
+  String get _profilePath => _isSelf ? 'me' : widget.userId;
+
   Future<void> _save() async {
     setState(() {
       _saving = true;
       _error = null;
     });
     try {
-      final profile = await ref.read(studioRepositoryProvider).updateMyProfile({
-        'name': _name.text.trim(),
-        'phone': _phone.text.trim(),
-        'bio': _bio.text.trim(),
-      });
-      ref.invalidate(authControllerProvider);
+      final profile = await ref.read(usersRepositoryProvider).updateProfile(
+        _profilePath,
+        {
+          'name': _name.text.trim(),
+          'phone': _phone.text.trim(),
+          'bio': _bio.text.trim(),
+        },
+      );
+      if (_isSelf) {
+        ref.invalidate(authControllerProvider);
+      }
       if (!mounted) {
         return;
       }
@@ -121,9 +130,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       _preview = Uint8List.fromList(bytes);
     });
     try {
-      await ref.read(studioRepositoryProvider).uploadMyPhoto(bytes, picked.name);
+      await ref.read(usersRepositoryProvider).uploadPhoto(_profilePath, bytes, picked.name);
       ref.invalidate(userPhotoProvider(widget.userId));
-      ref.invalidate(authControllerProvider);
+      if (_isSelf) {
+        ref.invalidate(authControllerProvider);
+      }
       await _load();
     } catch (_) {
       if (mounted) {
@@ -151,10 +162,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
     setState(() => _saving = true);
     try {
-      await ref.read(studioRepositoryProvider).deleteMyPhoto();
+      await ref.read(usersRepositoryProvider).deletePhoto(_profilePath);
       setState(() => _preview = null);
       ref.invalidate(userPhotoProvider(widget.userId));
-      ref.invalidate(authControllerProvider);
+      if (_isSelf) {
+        ref.invalidate(authControllerProvider);
+      }
       await _load();
     } catch (_) {
       if (mounted) {
@@ -170,14 +183,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isSelf = ref.watch(authControllerProvider).valueOrNull?.userId == widget.userId;
+    final me = ref.watch(authControllerProvider).valueOrNull;
+    final isSelf = me?.userId == widget.userId;
+    final canEdit = isSelf || (me?.can(Permissions.manageUsers) ?? false);
     final profile = _profile;
     final hasPhoto = _preview != null || profile?['hasPhoto'] == true;
     final name = profile?['name'] as String? ?? '';
+    final email = profile?['email'] as String?;
     return Scaffold(
       appBar: AppBar(
         title: Text(isSelf ? l10n.profile : (name.isEmpty ? l10n.member : name)),
-        actions: const [LogoutButton()],
+        actions: const [AppBarActions()],
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
@@ -196,7 +212,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         preview: _preview,
                         radius: 48,
                       ),
-                      if (isSelf) ...[
+                      if (canEdit) ...[
                         TextButton(onPressed: _saving ? null : _pickPhoto, child: Text(l10n.choosePhoto)),
                         if (hasPhoto)
                           TextButton(onPressed: _saving ? null : _removePhoto, child: Text(l10n.deletePhoto)),
@@ -212,12 +228,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                   ),
                 const SizedBox(height: 16),
-                if (isSelf) ...[
+                if (canEdit) ...[
                   TextField(
                     controller: _name,
                     enabled: !_saving,
                     decoration: InputDecoration(labelText: l10n.name),
                   ),
+                  if (email != null && email.isNotEmpty)
+                    ListTile(contentPadding: EdgeInsets.zero, title: Text(l10n.email), subtitle: Text(email)),
                   TextField(
                     controller: _phone,
                     enabled: !_saving,
@@ -238,8 +256,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ListTile(title: Text(l10n.about), subtitle: Text(profile['bio'] as String)),
                   if (profile['phone'] != null)
                     ListTile(title: Text(l10n.phone), subtitle: Text(profile['phone'] as String)),
-                  if (profile['email'] != null)
-                    ListTile(title: Text(l10n.email), subtitle: Text(profile['email'] as String)),
+                  if (email != null)
+                    ListTile(title: Text(l10n.email), subtitle: Text(email)),
                 ],
                 if (!isSelf)
                   RequirePermission(
@@ -248,7 +266,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       padding: const EdgeInsets.only(top: 16),
                       child: FilledButton(
                         onPressed: () async {
-                          await ref.read(studioRepositoryProvider).adjust(widget.userId, 8, l10n.adjustNote);
+                          await ref.read(usersRepositoryProvider).adjust(widget.userId, 8, l10n.adjustNote);
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(l10n.visitsGranted)),

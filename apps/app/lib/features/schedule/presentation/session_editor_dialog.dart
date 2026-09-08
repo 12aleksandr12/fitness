@@ -1,7 +1,8 @@
-import 'package:dio/dio.dart';
+import 'package:fitness_app/core/api_error.dart';
 import 'package:fitness_app/core/confirm_delete.dart';
 import 'package:fitness_app/core/locale_controller.dart';
 import 'package:fitness_app/features/schedule/application/schedule_providers.dart';
+import 'package:fitness_app/features/users/application/users_providers.dart';
 import 'package:fitness_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +19,7 @@ Future<void> showSessionEditor({
     builder: (ctx) => SessionEditorDialog(session: session),
   );
   if (saved == true) {
-    ref.invalidate(weekSessionsProvider);
+    invalidateStudioWeek(ref);
   }
 }
 
@@ -37,7 +38,9 @@ class _SessionEditorDialogState extends ConsumerState<SessionEditorDialog> {
   final _duration = TextEditingController(text: '60');
 
   List<Map<String, dynamic>> _types = [];
+  List<Map<String, dynamic>> _people = [];
   String? _classTypeId;
+  String? _trainerId;
   late DateTime _starts;
   bool _loading = true;
   bool _saving = false;
@@ -68,6 +71,8 @@ class _SessionEditorDialogState extends ConsumerState<SessionEditorDialog> {
           (session['classType'] as Map<String, dynamic>?)?['id'] as String?;
       _room.text = session['room'] as String? ?? '';
       _capacity.text = (session['capacity'] as num?)?.toInt().toString() ?? '8';
+      _trainerId = session['trainerId'] as String? ??
+          (session['trainer'] as Map<String, dynamic>?)?['id'] as String?;
     } else {
       final tomorrow = DateTime.now().add(const Duration(days: 1));
       _starts = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 10);
@@ -79,11 +84,20 @@ class _SessionEditorDialogState extends ConsumerState<SessionEditorDialog> {
 
   Future<void> _loadTypes() async {
     final types = await ref.read(studioRepositoryProvider).classTypes();
+    var people = <Map<String, dynamic>>[];
+    try {
+      final rows = await ref.read(usersRepositoryProvider).list();
+      people = [
+        for (final row in rows)
+          if (row['user'] is Map<String, dynamic>) row['user'] as Map<String, dynamic>,
+      ];
+    } catch (_) {}
     if (!mounted) {
       return;
     }
     setState(() {
       _types = types;
+      _people = people;
       _classTypeId ??= types.isEmpty ? null : types.first['id'] as String;
       _loading = false;
     });
@@ -144,6 +158,7 @@ class _SessionEditorDialogState extends ConsumerState<SessionEditorDialog> {
       'endsAt': ends.toUtc().toIso8601String(),
       'capacity': capacity,
       if (_room.text.trim().isNotEmpty) 'room': _room.text.trim(),
+      if (_trainerId != null) 'trainerId': _trainerId,
     };
   }
 
@@ -238,6 +253,35 @@ class _SessionEditorDialogState extends ConsumerState<SessionEditorDialog> {
                           ),
                         ),
                       ),
+                    InputDecorator(
+                      decoration: InputDecoration(labelText: l10n.trainer),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: _trainerId ?? '',
+                          items: [
+                            DropdownMenuItem(value: '', child: Text(l10n.noTrainer)),
+                            if (_trainerId != null && !_people.any((p) => p['id'] == _trainerId))
+                              DropdownMenuItem(
+                                value: _trainerId,
+                                child: Text(
+                                  (widget.session?['trainer'] as Map<String, dynamic>?)?['name']
+                                          as String? ??
+                                      l10n.trainer,
+                                ),
+                              ),
+                            for (final person in _people)
+                              DropdownMenuItem(
+                                value: person['id'] as String,
+                                child: Text(person['name'] as String? ?? ''),
+                              ),
+                          ],
+                          onChanged: _saving
+                              ? null
+                              : (v) => setState(() => _trainerId = (v == null || v.isEmpty) ? null : v),
+                        ),
+                      ),
+                    ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(l10n.date),
@@ -303,24 +347,12 @@ class _SessionEditorDialogState extends ConsumerState<SessionEditorDialog> {
 }
 
 String _apiMessage(Object error, AppLocalizations l10n) {
-  if (error is DioException) {
-    final data = error.response?.data;
-    if (data is Map) {
-      switch (data['code']) {
-        case 'SESSION_HAS_BOOKINGS':
-          return l10n.sessionHasBookings;
-        case 'CAPACITY_BELOW_BOOKED':
-          return l10n.capacityBelowBookedShort;
-        case 'INVALID_SESSION_RANGE':
-          return l10n.invalidSessionRange;
-        case 'CLASS_TYPE_NOT_FOUND':
-          return l10n.classTypeNotFound;
-      }
-      final message = data['message'];
-      if (message is String && message.isNotEmpty) {
-        return message;
-      }
-    }
-  }
-  return l10n.saveFailed;
+  return switch (apiErrorCode(error)) {
+    'SESSION_HAS_BOOKINGS' => l10n.sessionHasBookings,
+    'CAPACITY_BELOW_BOOKED' => l10n.capacityBelowBookedShort,
+    'INVALID_SESSION_RANGE' => l10n.invalidSessionRange,
+    'CLASS_TYPE_NOT_FOUND' => l10n.classTypeNotFound,
+    'TRAINER_NOT_FOUND' => l10n.trainerNotFound,
+    _ => l10n.saveFailed,
+  };
 }
