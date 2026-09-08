@@ -35,6 +35,7 @@ model Studio {
   passes       Pass[]
   ledgerEntries LedgerEntry[]
   invites      Invite[]
+  sessionLogs  SessionLog[]
 
   @@map("studios")
 }
@@ -56,6 +57,8 @@ model User {
   passes          Pass[]
   ledgerEntries   LedgerEntry[]
   ledgerCreated   LedgerEntry[] @relation("LedgerActor")
+  sessionLogsActor  SessionLog[]  @relation("SessionLogActor")
+  sessionLogsTarget SessionLog[]  @relation("SessionLogTarget")
 
   @@map("users")
 }
@@ -166,6 +169,7 @@ model Session {
   classType ClassType  @relation(fields: [classTypeId], references: [id])
   trainer   User?      @relation("SessionTrainer", fields: [trainerId], references: [id])
   bookings  Booking[]
+  logs      SessionLog[]
 
   @@index([studioId, startsAt])
   @@map("sessions")
@@ -221,4 +225,22 @@ model LedgerEntry {
   createdBy User?    @relation("LedgerActor", fields: [createdById], references: [id])
 
   @@map("ledger_entries")
+}
+
+model SessionLog {
+  id        String   @id @db.Uuid
+  studioId  String   @map("studio_id") @db.Uuid
+  sessionId String   @map("session_id") @db.Uuid
+  actorId   String   @map("actor_id") @db.Uuid
+  targetId  String?  @map("target_id") @db.Uuid
+  action    String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  studio  Studio  @relation(fields: [studioId], references: [id])
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  actor   User    @relation("SessionLogActor", fields: [actorId], references: [id])
+  target  User?   @relation("SessionLogTarget", fields: [targetId], references: [id])
+
+  @@index([sessionId, createdAt])
+  @@map("session_logs")
 }
