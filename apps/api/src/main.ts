@@ -23,6 +23,10 @@ async function bootstrap() {
   );
   const origins = (process.env.CORS_ORIGINS ?? '*').split(',').map((s) => s.trim());
   app.enableCors({ origin: origins.includes('*') ? true : origins, credentials: true });
+  // CJS Nest + Fastify plugin (multipart upload).
+  await app.register(require('@fastify/multipart'), {
+    limits: { fileSize: 512 * 1024, files: 1 },
+  });
 
   const swagger = new DocumentBuilder()
     .setTitle('Fitness API')
