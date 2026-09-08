@@ -52,12 +52,13 @@ export class ScheduleService {
   async createSession(actor: AuthUser, dto: CreateSessionDto) {
     const { startsAt, endsAt } = parseSessionRange(dto.startsAt, dto.endsAt);
     await this.assertClassType(actor.studioId, dto.classTypeId);
+    const trainerId = await this.assertTrainer(actor.studioId, dto.trainerId);
     return this.prisma.session.create({
       data: {
         id: uuidv7(),
         studioId: actor.studioId,
         classTypeId: dto.classTypeId,
-        trainerId: dto.trainerId ?? null,
+        trainerId,
         room: dto.room,
         startsAt,
         endsAt,
@@ -75,6 +76,7 @@ export class ScheduleService {
     }
     const { startsAt, endsAt } = parseSessionRange(dto.startsAt, dto.endsAt);
     await this.assertClassType(actor.studioId, dto.classTypeId);
+    const trainerId = await this.assertTrainer(actor.studioId, dto.trainerId);
     const booked = await this.prisma.booking.count({
       where: { sessionId: id, status: { in: [...ACTIVE] } },
     });
@@ -89,7 +91,7 @@ export class ScheduleService {
       where: { id },
       data: {
         classTypeId: dto.classTypeId,
-        trainerId: dto.trainerId ?? null,
+        trainerId,
         room: dto.room,
         startsAt,
         endsAt,
@@ -120,6 +122,21 @@ export class ScheduleService {
       this.prisma.session.delete({ where: { id } }),
     ]);
     return { ok: true };
+  }
+
+  private async assertTrainer(studioId: string, trainerId?: string | null) {
+    const id = trainerId?.trim();
+    if (!id) {
+      return null;
+    }
+    const membership = await this.prisma.membership.findFirst({
+      where: { studioId, userId: id },
+      select: { id: true },
+    });
+    if (!membership) {
+      throw new AppError(HttpStatus.BAD_REQUEST, 'TRAINER_NOT_FOUND', 'Trainer is not in this studio');
+    }
+    return id;
   }
 
   private async assertClassType(studioId: string, classTypeId: string) {
