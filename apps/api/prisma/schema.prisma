@@ -25,7 +25,7 @@ model Studio {
   name                    String
   timezone                String   @default("Europe/Moscow")
   cancellationHoursBefore Int      @default(4) @map("cancellation_hours_before")
-  createdAt               DateTime @default(now())  @map("created_at")
+  createdAt               DateTime @default(now()) @db.Timestamptz @map("created_at")
 
   roles        Role[]
   memberships  Membership[]
@@ -48,7 +48,7 @@ model User {
   phone        String?
   bio          String?  @db.VarChar(500)
   photoExt     String?  @map("photo_ext")
-  createdAt    DateTime @default(now())  @map("created_at")
+  createdAt    DateTime @default(now()) @db.Timestamptz @map("created_at")
 
   memberships     Membership[]
   refreshTokens   RefreshToken[]
@@ -78,7 +78,7 @@ model Role {
   studioId  String   @map("studio_id") @db.Uuid
   name      String
   isSystem  Boolean  @default(false) @map("is_system")
-  createdAt DateTime @default(now())  @map("created_at")
+  createdAt DateTime @default(now()) @db.Timestamptz @map("created_at")
 
   studio        Studio           @relation(fields: [studioId], references: [id])
   permissions   RolePermission[]
@@ -118,9 +118,9 @@ model RefreshToken {
   id        String    @id @db.Uuid
   userId    String    @map("user_id") @db.Uuid
   tokenHash String    @unique @map("token_hash")
-  expiresAt DateTime   @map("expires_at")
-  revokedAt DateTime?  @map("revoked_at")
-  createdAt DateTime  @default(now())  @map("created_at")
+  expiresAt DateTime  @db.Timestamptz @map("expires_at")
+  revokedAt DateTime? @db.Timestamptz @map("revoked_at")
+  createdAt DateTime  @default(now()) @db.Timestamptz @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -133,9 +133,9 @@ model Invite {
   roleId    String    @map("role_id") @db.Uuid
   email     String
   tokenHash String    @unique @map("token_hash")
-  expiresAt DateTime   @map("expires_at")
-  usedAt    DateTime?  @map("used_at")
-  createdAt DateTime  @default(now())  @map("created_at")
+  expiresAt DateTime  @db.Timestamptz @map("expires_at")
+  usedAt    DateTime? @db.Timestamptz @map("used_at")
+  createdAt DateTime  @default(now()) @db.Timestamptz @map("created_at")
 
   studio Studio @relation(fields: [studioId], references: [id])
   role   Role   @relation(fields: [roleId], references: [id])
@@ -147,7 +147,7 @@ model ClassType {
   id        String   @id @db.Uuid
   studioId  String   @map("studio_id") @db.Uuid
   name      String
-  createdAt DateTime @default(now())  @map("created_at")
+  createdAt DateTime @default(now()) @db.Timestamptz @map("created_at")
 
   studio   Studio    @relation(fields: [studioId], references: [id])
   sessions Session[]
@@ -161,8 +161,8 @@ model Session {
   classTypeId String   @map("class_type_id") @db.Uuid
   trainerId   String?  @map("trainer_id") @db.Uuid
   room        String?
-  startsAt    DateTime  @map("starts_at")
-  endsAt      DateTime  @map("ends_at")
+  startsAt    DateTime @db.Timestamptz @map("starts_at")
+  endsAt      DateTime @db.Timestamptz @map("ends_at")
   capacity    Int
 
   studio    Studio     @relation(fields: [studioId], references: [id])
@@ -181,7 +181,7 @@ model Booking {
   sessionId String        @map("session_id") @db.Uuid
   userId    String        @map("user_id") @db.Uuid
   status    BookingStatus @default(booked)
-  createdAt DateTime      @default(now())  @map("created_at")
+  createdAt DateTime      @default(now()) @db.Timestamptz @map("created_at")
 
   studio  Studio  @relation(fields: [studioId], references: [id])
   session Session @relation(fields: [sessionId], references: [id])
@@ -198,9 +198,9 @@ model Pass {
   userId           String    @map("user_id") @db.Uuid
   name             String
   remainingVisits  Int      @map("remaining_visits")
-  validFrom        DateTime?  @map("valid_from")
-  validUntil       DateTime?  @map("valid_until")
-  createdAt        DateTime  @default(now())  @map("created_at")
+  validFrom        DateTime? @db.Timestamptz @map("valid_from")
+  validUntil       DateTime? @db.Timestamptz @map("valid_until")
+  createdAt        DateTime  @default(now()) @db.Timestamptz @map("created_at")
 
   studio Studio @relation(fields: [studioId], references: [id])
   user   User   @relation(fields: [userId], references: [id])
@@ -217,7 +217,7 @@ model LedgerEntry {
   type        LedgerType
   visits      Int
   note        String?
-  createdAt   DateTime   @default(now())  @map("created_at")
+  createdAt   DateTime   @default(now()) @db.Timestamptz @map("created_at")
 
   studio    Studio   @relation(fields: [studioId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
@@ -235,7 +235,7 @@ model SessionLog {
   targetId  String?  @map("target_id") @db.Uuid
   action    String
   comment   String?  @db.VarChar(200)
-  createdAt DateTime @default(now())  @map("created_at")
+  createdAt DateTime @default(now()) @db.Timestamptz @map("created_at")
 
   studio  Studio  @relation(fields: [studioId], references: [id])
   session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
