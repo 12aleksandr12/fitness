@@ -1,0 +1,16 @@
+---
+description: Dart / Flutter coding standards
+globs: apps/app/**/*.dart
+---
+
+# Dart standards
+
+- `type` aliases over redundant wrappers. Prefer explicit types on public APIs.
+- Models: `freezed` (or equivalent generated DTO from OpenAPI). No hand-written `==` / `copyWith`.
+- State: Riverpod (`@riverpod` / `Notifier`). No GetX, Bloc, Provider+GetIt.
+- Screens do not call `Dio` or know URL paths — only repositories in `data/`.
+- `flutter_secure_storage` for refresh tokens. Not `SharedPreferences`.
+- `avoid_print` in production paths; use a logger if needed.
+- Generated files (`*.g.dart`, `*.freezed.dart`) are not edited by hand.
+- Comments: why-only, English.
+---

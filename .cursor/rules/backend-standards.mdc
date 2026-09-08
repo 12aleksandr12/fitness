@@ -1,0 +1,18 @@
+---
+description: NestJS + Prisma conventions for apps/api
+globs: apps/api/**/*.ts
+---
+
+# Backend (NestJS)
+
+- Feature module per domain: `auth`, `users`, `roles`, `schedule`, `booking`, `ledger`, `studio`.
+- Controller: HTTP + DTO + `@RequirePermission(...)` only. No Prisma in controllers.
+- Service: orchestration and `$transaction` for book / check-in / ledger adjust.
+- Never return a Prisma model from a controller — map to a response DTO.
+- Global `ValidationPipe`: `whitelist` + `forbidNonWhitelisted`.
+- Errors: throw Nest HTTP exceptions with stable `code` in the body (`BOOKING_FULL`, `ALREADY_BOOKED`, `LAST_MANAGE_ROLES`). Filter in `common/`.
+- IDs: UUID, set in app (`uuidv7`) or DB. Integers for visit counts — never `float`.
+- `timestamptz` UTC in DB. Do not store local wall time without offset.
+- Auth: JWT access in `Authorization: Bearer`; refresh hashed in `refresh_token`. Permissions loaded from Membership on each request — not baked into the access token.
+- Do not add a command bus, Nest `@nestjs/cqrs` module, GraphQL, or a second database.
+---

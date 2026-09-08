@@ -1,0 +1,15 @@
+---
+description: Adaptive layout — features on every platform, density from width
+globs: apps/app/**/*.dart
+---
+
+# Flutter layout
+
+- Breakpoints: compact &lt; 600, medium 600–899, expanded ≥ 900 logical px.
+- Expanded: `NavigationRail`. Compact: `NavigationBar`. **Same destinations** for the same permission set.
+- Schedule: `ScheduleList` (compact) and `ScheduleGrid` (expanded) share commands (book, cancel, create slot). Do not ship one without the other.
+- Forbidden: `if (Platform.isIOS) hide(ClientsPage)` or omitting a role screen on Windows.
+- Allowed: `if (width < 900) dayView else weekGrid`.
+- New feature is not done until it opens on a narrow width and a wide window for a user who has that permission.
+- Before adding a plugin: confirm iOS, Android, macOS, Windows, Web on pub.dev. Missing Windows → stub, do not hide the feature.
+---

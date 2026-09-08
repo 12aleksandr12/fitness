@@ -1,0 +1,47 @@
+---
+description: Core Fitness rules — scoped edits, Compose for API, Flutter on host, rule map.
+alwaysApply: true
+---
+
+# Core (always active)
+
+Language: `language.mdc`. Architecture: modular monolith + feature-first (see skill `fitness-stack`).
+
+## Subagents decision (every user request)
+
+At the start of every user request (before deep solo exploration; **not** at the start of a nested `Task`), silently apply skill **`consider-subagents`**. Launch when the gate is YES. Do not ask “запускать subagents?” when obvious. Skip if the user said «без subagents» / «сам». Max nest depth 2.
+
+## Scoped edits
+
+Minimal diffs. No drive-by refactors, unrelated files, or speculative layers (no CQRS bus, no 4-folder Clean Architecture).
+
+## Shell — API in Compose, Flutter on host
+
+- **API runtime belongs to Compose.** `node` / `npm` / `npx prisma` / `redis-cli` / `psql` against project code run via `docker compose exec api` (or `run --rm`), never as host binaries on container paths. Map → skill `local-docker-stack`.
+- **Host Shell is for** `git`, `rg`, file tools, **Flutter / Dart / FVM** (`flutter run`, `dart`, `fvm`).
+- Never rewrite source with an ad-hoc multiline regex script. Bound one-offs with `timeout`.
+
+## Design principles
+
+SOLID · KISS · DRY · YAGNI · Tell-Don't-Ask · Law of Demeter.
+
+- **KISS / YAGNI** — Controller → Service → Prisma; Widget → Riverpod → Repository. No MediatR, no GetX, no GetIt.
+- **Permissions, not platform** — hide UI by slug (`manage_roles`, …), never `if (Platform.isIOS) hide(feature)`.
+- **DRY** — extract on the 2nd occurrence.
+
+## Rule map
+
+| Working on | Governing rules |
+|---|---|
+| NestJS / Prisma (`apps/api/**`) | `backend-standards.mdc` |
+| Dart / Flutter (`apps/app/**`) | `dart-standards.mdc` · `flutter-layout.mdc` |
+| Compose / local API | skill `local-docker-stack` |
+| Stack / folders / what not to add | skill `fitness-stack` |
+| Every response | `language.mdc` |
+| User asked to check edits vs rules | skill `post-change-audit` (opt-in only) |
+
+## Global pre-flight
+
+1. Search first (DRY).
+2. Colocate with the feature; promote to `common/` / `lib/core` on the 2nd consumer.
+3. New Flutter package: check pub.dev **platforms** (iOS, Android, macOS, Windows, Web) before adding.

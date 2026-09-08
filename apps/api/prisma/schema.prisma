@@ -1,0 +1,221 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BookingStatus {
+  booked
+  cancelled
+  attended
+  no_show
+}
+
+enum LedgerType {
+  credit
+  debit
+  adjust
+}
+
+model Studio {
+  id                      String   @id @db.Uuid
+  name                    String
+  timezone                String   @default("Europe/Moscow")
+  cancellationHoursBefore Int      @default(4) @map("cancellation_hours_before")
+  createdAt               DateTime @default(now()) @map("created_at")
+
+  roles        Role[]
+  memberships  Membership[]
+  classTypes   ClassType[]
+  sessions     Session[]
+  bookings     Booking[]
+  passes       Pass[]
+  ledgerEntries LedgerEntry[]
+  invites      Invite[]
+
+  @@map("studios")
+}
+
+model User {
+  id           String   @id @db.Uuid
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  memberships     Membership[]
+  refreshTokens   RefreshToken[]
+  trainerSessions Session[]     @relation("SessionTrainer")
+  bookings        Booking[]
+  passes          Pass[]
+  ledgerEntries   LedgerEntry[]
+  ledgerCreated   LedgerEntry[] @relation("LedgerActor")
+
+  @@map("users")
+}
+
+model Permission {
+  id    String @id @db.Uuid
+  slug  String @unique
+  name  String
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model Role {
+  id        String   @id @db.Uuid
+  studioId  String   @map("studio_id") @db.Uuid
+  name      String
+  isSystem  Boolean  @default(false) @map("is_system")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  studio        Studio           @relation(fields: [studioId], references: [id])
+  permissions   RolePermission[]
+  memberships   Membership[]
+  invites       Invite[]
+
+  @@unique([studioId, name])
+  @@map("roles")
+}
+
+model RolePermission {
+  roleId       String @map("role_id") @db.Uuid
+  permissionId String @map("permission_id") @db.Uuid
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model Membership {
+  id       String @id @db.Uuid
+  userId   String @map("user_id") @db.Uuid
+  studioId String @map("studio_id") @db.Uuid
+  roleId   String @map("role_id") @db.Uuid
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studio Studio @relation(fields: [studioId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  @@unique([userId, studioId])
+  @@map("memberships")
+}
+
+model RefreshToken {
+  id        String    @id @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model Invite {
+  id        String    @id @db.Uuid
+  studioId  String    @map("studio_id") @db.Uuid
+  roleId    String    @map("role_id") @db.Uuid
+  email     String
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  studio Studio @relation(fields: [studioId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  @@map("invites")
+}
+
+model ClassType {
+  id        String   @id @db.Uuid
+  studioId  String   @map("studio_id") @db.Uuid
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  studio   Studio    @relation(fields: [studioId], references: [id])
+  sessions Session[]
+
+  @@map("class_types")
+}
+
+model Session {
+  id          String   @id @db.Uuid
+  studioId    String   @map("studio_id") @db.Uuid
+  classTypeId String   @map("class_type_id") @db.Uuid
+  trainerId   String?  @map("trainer_id") @db.Uuid
+  room        String?
+  startsAt    DateTime @map("starts_at")
+  endsAt      DateTime @map("ends_at")
+  capacity    Int
+
+  studio    Studio     @relation(fields: [studioId], references: [id])
+  classType ClassType  @relation(fields: [classTypeId], references: [id])
+  trainer   User?      @relation("SessionTrainer", fields: [trainerId], references: [id])
+  bookings  Booking[]
+
+  @@index([studioId, startsAt])
+  @@map("sessions")
+}
+
+model Booking {
+  id        String        @id @db.Uuid
+  studioId  String        @map("studio_id") @db.Uuid
+  sessionId String        @map("session_id") @db.Uuid
+  userId    String        @map("user_id") @db.Uuid
+  status    BookingStatus @default(booked)
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  studio  Studio  @relation(fields: [studioId], references: [id])
+  session Session @relation(fields: [sessionId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  ledger  LedgerEntry[]
+
+  @@unique([sessionId, userId])
+  @@map("bookings")
+}
+
+model Pass {
+  id               String    @id @db.Uuid
+  studioId         String    @map("studio_id") @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  name             String
+  remainingVisits  Int      @map("remaining_visits")
+  validFrom        DateTime? @map("valid_from")
+  validUntil       DateTime? @map("valid_until")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  studio Studio @relation(fields: [studioId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@map("passes")
+}
+
+model LedgerEntry {
+  id          String     @id @db.Uuid
+  studioId    String     @map("studio_id") @db.Uuid
+  userId      String     @map("user_id") @db.Uuid
+  bookingId   String?    @map("booking_id") @db.Uuid
+  createdById String?    @map("created_by_id") @db.Uuid
+  type        LedgerType
+  visits      Int
+  note        String?
+  createdAt   DateTime   @default(now()) @map("created_at")
+
+  studio    Studio   @relation(fields: [studioId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  booking   Booking? @relation(fields: [bookingId], references: [id])
+  createdBy User?    @relation("LedgerActor", fields: [createdById], references: [id])
+
+  @@map("ledger_entries")
+}
