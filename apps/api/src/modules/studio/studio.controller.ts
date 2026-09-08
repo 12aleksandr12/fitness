@@ -3,17 +3,17 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { AuthUser } from '../../common/auth.types';
 import { CurrentUser } from '../../common/current-user.decorator';
 import { JwtAuthGuard } from '../../common/jwt-auth.guard';
-import { PrismaService } from '../../common/prisma.service';
+import { StudioService } from './studio.service';
 
 @ApiTags('studio')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('studio')
 export class StudioController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly studios: StudioService) {}
 
   @Get()
-  async current(@CurrentUser() user: AuthUser) {
-    return this.prisma.studio.findUniqueOrThrow({ where: { id: user.studioId } });
+  current(@CurrentUser() user: AuthUser) {
+    return this.studios.current(user.studioId);
   }
 }

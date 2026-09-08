@@ -26,28 +26,30 @@ export class LedgerService {
   }
 
   async createPass(actor: AuthUser, userId: string, dto: CreatePassDto) {
-    const pass = await this.prisma.pass.create({
-      data: {
-        id: uuidv7(),
-        studioId: actor.studioId,
-        userId,
-        name: dto.name,
-        remainingVisits: dto.visits,
-        validFrom: new Date(),
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const pass = await tx.pass.create({
+        data: {
+          id: uuidv7(),
+          studioId: actor.studioId,
+          userId,
+          name: dto.name,
+          remainingVisits: dto.visits,
+          validFrom: new Date(),
+        },
+      });
+      await tx.ledgerEntry.create({
+        data: {
+          id: uuidv7(),
+          studioId: actor.studioId,
+          userId,
+          createdById: actor.userId,
+          type: 'credit',
+          visits: dto.visits,
+          note: dto.name,
+        },
+      });
+      return pass;
     });
-    await this.prisma.ledgerEntry.create({
-      data: {
-        id: uuidv7(),
-        studioId: actor.studioId,
-        userId,
-        createdById: actor.userId,
-        type: 'credit',
-        visits: dto.visits,
-        note: dto.name,
-      },
-    });
-    return pass;
   }
 
   async adjust(actor: AuthUser, userId: string, dto: AdjustBalanceDto) {
@@ -57,38 +59,40 @@ export class LedgerService {
     if (!membership) {
       throw new AppError(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', 'User not in studio');
     }
-    const pass = await this.prisma.pass.findFirst({
-      where: { studioId: actor.studioId, userId },
-      orderBy: { createdAt: 'desc' },
-    });
-    if (pass) {
-      await this.prisma.pass.update({
-        where: { id: pass.id },
-        data: { remainingVisits: { increment: dto.visits } },
+    return this.prisma.$transaction(async (tx) => {
+      const pass = await tx.pass.findFirst({
+        where: { studioId: actor.studioId, userId },
+        orderBy: { createdAt: 'desc' },
       });
-    } else if (dto.visits > 0) {
-      await this.prisma.pass.create({
+      if (pass) {
+        await tx.pass.update({
+          where: { id: pass.id },
+          data: { remainingVisits: { increment: dto.visits } },
+        });
+      } else if (dto.visits > 0) {
+        await tx.pass.create({
+          data: {
+            id: uuidv7(),
+            studioId: actor.studioId,
+            userId,
+            name: 'Корректировка',
+            remainingVisits: dto.visits,
+          },
+        });
+      } else {
+        throw new AppError(HttpStatus.BAD_REQUEST, 'NO_PASS', 'No pass to debit');
+      }
+      return tx.ledgerEntry.create({
         data: {
           id: uuidv7(),
           studioId: actor.studioId,
           userId,
-          name: 'Корректировка',
-          remainingVisits: dto.visits,
+          createdById: actor.userId,
+          type: 'adjust',
+          visits: dto.visits,
+          note: dto.note ?? 'Manual adjust',
         },
       });
-    } else {
-      throw new AppError(HttpStatus.BAD_REQUEST, 'NO_PASS', 'No pass to debit');
-    }
-    return this.prisma.ledgerEntry.create({
-      data: {
-        id: uuidv7(),
-        studioId: actor.studioId,
-        userId,
-        createdById: actor.userId,
-        type: 'adjust',
-        visits: dto.visits,
-        note: dto.note ?? 'Manual adjust',
-      },
     });
   }
 
