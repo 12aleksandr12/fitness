@@ -14,6 +14,10 @@ const MIME: Record<string, string> = {
   webp: 'image/webp',
 };
 
+export function canEditProfile(actor: AuthUser, userId: string): boolean {
+  return actor.userId === userId || actor.permissions.includes('manage_users');
+}
+
 export function sniffImage(buf: Buffer): keyof typeof MIME | null {
   if (buf.length < 12) {
     return null;
@@ -57,6 +61,19 @@ export class UsersService {
       actor.permissions.includes('view_clients') ||
       actor.permissions.includes('manage_users')
     );
+  }
+
+  private async requireEditableMember(actor: AuthUser, userId: string) {
+    if (!canEditProfile(actor, userId)) {
+      throw new AppError(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Missing permission');
+    }
+    const membership = await this.prisma.membership.findFirst({
+      where: { studioId: actor.studioId, userId },
+      select: { id: true },
+    });
+    if (!membership) {
+      throw new AppError(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND', 'User not found');
+    }
   }
 
   private toProfile(actor: AuthUser, user: UserRow, roleName: string) {
@@ -105,7 +122,8 @@ export class UsersService {
     return this.one(actor, actor.userId);
   }
 
-  async updateMe(actor: AuthUser, dto: UpdateProfileDto) {
+  async updateProfile(actor: AuthUser, userId: string, dto: UpdateProfileDto) {
+    await this.requireEditableMember(actor, userId);
     const data: { name?: string; phone?: string | null; bio?: string | null } = {};
     if (dto.name !== undefined) {
       data.name = dto.name.trim();
@@ -116,11 +134,12 @@ export class UsersService {
     if (dto.bio !== undefined) {
       data.bio = dto.bio.trim() === '' ? null : dto.bio.trim();
     }
-    await this.prisma.user.update({ where: { id: actor.userId }, data });
-    return this.me(actor);
+    await this.prisma.user.update({ where: { id: userId }, data });
+    return this.one(actor, userId);
   }
 
-  async savePhoto(actor: AuthUser, buf: Buffer) {
+  async savePhoto(actor: AuthUser, userId: string, buf: Buffer) {
+    await this.requireEditableMember(actor, userId);
     if (buf.length > MAX_PHOTO_BYTES) {
       throw new AppError(HttpStatus.BAD_REQUEST, 'PHOTO_TOO_LARGE', 'Photo must be 512 KB or smaller');
     }
@@ -128,23 +147,24 @@ export class UsersService {
     if (!ext) {
       throw new AppError(HttpStatus.BAD_REQUEST, 'PHOTO_TYPE', 'Only JPEG, PNG or WebP photos are allowed');
     }
-    const current = await this.prisma.user.findUnique({ where: { id: actor.userId } });
+    const current = await this.prisma.user.findUnique({ where: { id: userId } });
     await mkdir(join(this.uploadsDir(), 'avatars'), { recursive: true });
     if (current?.photoExt && current.photoExt !== ext) {
-      await unlink(this.photoPath(actor.userId, current.photoExt)).catch(() => undefined);
+      await unlink(this.photoPath(userId, current.photoExt)).catch(() => undefined);
     }
-    await writeFile(this.photoPath(actor.userId, ext), buf);
-    await this.prisma.user.update({ where: { id: actor.userId }, data: { photoExt: ext } });
-    return this.me(actor);
+    await writeFile(this.photoPath(userId, ext), buf);
+    await this.prisma.user.update({ where: { id: userId }, data: { photoExt: ext } });
+    return this.one(actor, userId);
   }
 
-  async deletePhoto(actor: AuthUser) {
-    const current = await this.prisma.user.findUnique({ where: { id: actor.userId } });
+  async deletePhoto(actor: AuthUser, userId: string) {
+    await this.requireEditableMember(actor, userId);
+    const current = await this.prisma.user.findUnique({ where: { id: userId } });
     if (current?.photoExt) {
-      await unlink(this.photoPath(actor.userId, current.photoExt)).catch(() => undefined);
-      await this.prisma.user.update({ where: { id: actor.userId }, data: { photoExt: null } });
+      await unlink(this.photoPath(userId, current.photoExt)).catch(() => undefined);
+      await this.prisma.user.update({ where: { id: userId }, data: { photoExt: null } });
     }
-    return this.me(actor);
+    return this.one(actor, userId);
   }
 
   async photoFile(actor: AuthUser, userId: string): Promise<{ buf: Buffer; mime: string }> {

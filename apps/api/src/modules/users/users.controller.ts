@@ -31,23 +31,18 @@ export class UsersController {
 
   @Patch('me')
   updateMe(@CurrentUser() user: AuthUser, @Body() dto: UpdateProfileDto) {
-    return this.users.updateMe(user, dto);
+    return this.users.updateProfile(user, user.userId, dto);
   }
 
   @Post('me/photo')
   @ApiConsumes('multipart/form-data')
   async uploadPhoto(@CurrentUser() user: AuthUser, @Req() req: FastifyRequest) {
-    const file = await (req as FastifyRequest & { file: () => Promise<{ toBuffer: () => Promise<Buffer> } | undefined> }).file();
-    if (!file) {
-      throw new AppError(HttpStatus.BAD_REQUEST, 'PHOTO_REQUIRED', 'Photo file is required');
-    }
-    const buf = await file.toBuffer();
-    return this.users.savePhoto(user, buf);
+    return this.users.savePhoto(user, user.userId, await this.readPhotoBuffer(req));
   }
 
   @Delete('me/photo')
   deletePhoto(@CurrentUser() user: AuthUser) {
-    return this.users.deletePhoto(user);
+    return this.users.deletePhoto(user, user.userId);
   }
 
   @Get('me/photo')
@@ -66,8 +61,45 @@ export class UsersController {
     return new StreamableFile(buf, { type: mime });
   }
 
+  @Patch(':id')
+  @RequirePermission('manage_users')
+  updateOne(
+    @CurrentUser() user: AuthUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateProfileDto,
+  ) {
+    return this.users.updateProfile(user, id, dto);
+  }
+
+  @Post(':id/photo')
+  @RequirePermission('manage_users')
+  @ApiConsumes('multipart/form-data')
+  async uploadUserPhoto(
+    @CurrentUser() user: AuthUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: FastifyRequest,
+  ) {
+    return this.users.savePhoto(user, id, await this.readPhotoBuffer(req));
+  }
+
+  @Delete(':id/photo')
+  @RequirePermission('manage_users')
+  deleteUserPhoto(@CurrentUser() user: AuthUser, @Param('id', ParseUUIDPipe) id: string) {
+    return this.users.deletePhoto(user, id);
+  }
+
   @Get(':id')
   one(@CurrentUser() user: AuthUser, @Param('id', ParseUUIDPipe) id: string) {
     return this.users.one(user, id);
+  }
+
+  private async readPhotoBuffer(req: FastifyRequest): Promise<Buffer> {
+    const file = await (
+      req as FastifyRequest & { file: () => Promise<{ toBuffer: () => Promise<Buffer> } | undefined> }
+    ).file();
+    if (!file) {
+      throw new AppError(HttpStatus.BAD_REQUEST, 'PHOTO_REQUIRED', 'Photo file is required');
+    }
+    return file.toBuffer();
   }
 }
