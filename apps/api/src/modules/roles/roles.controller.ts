@@ -22,9 +22,8 @@ export class RolesController {
   }
 
   @Get('roles')
-  @RequirePermission('manage_roles')
   list(@CurrentUser() user: AuthUser) {
-    return this.roles.listRoles(user.studioId);
+    return this.roles.listForInviteOrManage(user);
   }
 
   @Post('roles')

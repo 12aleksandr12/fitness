@@ -22,7 +22,12 @@ async function bootstrap() {
     }),
   );
   const origins = (process.env.CORS_ORIGINS ?? '*').split(',').map((s) => s.trim());
-  app.enableCors({ origin: origins.includes('*') ? true : origins, credentials: true });
+  app.enableCors({
+    origin: origins.includes('*') ? true : origins,
+    credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  });
   // CJS Nest + Fastify plugin (multipart upload).
   await app.register(require('@fastify/multipart'), {
     limits: { fileSize: 512 * 1024, files: 1 },

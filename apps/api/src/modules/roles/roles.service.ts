@@ -22,6 +22,17 @@ export class RolesService {
     });
   }
 
+  listForInviteOrManage(actor: AuthUser) {
+    const can =
+      actor.permissions.includes('manage_roles') || actor.permissions.includes('manage_users');
+    if (!can) {
+      throw new AppError(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Missing permission', {
+        permission: 'manage_users',
+      });
+    }
+    return this.listRoles(actor.studioId);
+  }
+
   async create(actor: AuthUser, dto: CreateRoleDto) {
     const permissionIds = await this.resolvePermissionIds(dto.permissionSlugs);
     return this.prisma.role.create({

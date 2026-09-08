@@ -75,9 +75,9 @@ export class AuthService {
     await this.mail.send(
       dto.email,
       'Приглашение в Fitness',
-      `Вас пригласили в студию. Токен регистрации: ${token}`,
+      `Вас пригласили в студию. Откройте Регистрацию и вставьте токен:\n${token}`,
     );
-    return { ok: true };
+    return { ok: true, token };
   }
 
   async register(dto: RegisterDto) {
