@@ -16,7 +16,7 @@ Modules: `auth`, `users`, `roles`, `schedule`, `booking`, `ledger`, `studio`.
 
 ## Flutter
 
-Riverpod, `go_router`, `dio`, `freezed` / OpenAPI DTO, `flutter_secure_storage`. Theme tokens in `ThemeExtension`. Breakpoints 600 / 900.
+Riverpod, `go_router`, `dio`, `flutter_secure_storage`. Typed DTO / `freezed` when the same JSON is read in 2+ screens — not a repo-wide codegen pass. Theme tokens in `ThemeExtension`. Breakpoints 600 / 900. One repository per feature (`data/`).
 
 ## Permissions (catalog in code/seed only)
 

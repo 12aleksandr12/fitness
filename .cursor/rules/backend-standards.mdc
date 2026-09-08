@@ -6,9 +6,10 @@ globs: apps/api/**/*.ts
 # Backend (NestJS)
 
 - Feature module per domain: `auth`, `users`, `roles`, `schedule`, `booking`, `ledger`, `studio`.
-- Controller: HTTP + DTO + `@RequirePermission(...)` only. No Prisma in controllers.
-- Service: orchestration and `$transaction` for book / check-in / ledger adjust.
-- Never return a Prisma model from a controller — map to a response DTO.
+- Controller: HTTP + DTO + `@RequirePermission(...)` only. No Prisma in controllers. If Prisma appears — add a service in that module (`StudioService`), do not inject `PrismaService` into HTTP.
+- Service: orchestration and `$transaction` for book / check-in / ledger adjust / createPass.
+- Response: never leak `passwordHash`. Map the public JSON in the service. Do not add a DTO class per Prisma table by default (YAGNI). On the **2nd** identical shape (`hasPhoto`, user+role select, active booking statuses, `requireMembership`) — extract one helper in the owning module or `common/`, reuse it. No new layer.
+- Shared domain constants (`booked`+`attended`) live in one place (`common/` or booking), not copied per service.
 - Global `ValidationPipe`: `whitelist` + `forbidNonWhitelisted`.
 - Errors: throw Nest HTTP exceptions with stable `code` in the body (`BOOKING_FULL`, `ALREADY_BOOKED`, `LAST_MANAGE_ROLES`). Filter in `common/`.
 - IDs: UUID, set in app (`uuidv7`) or DB. Integers for visit counts — never `float`.

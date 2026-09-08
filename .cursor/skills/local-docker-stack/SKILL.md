@@ -10,7 +10,7 @@ description: >-
 
 Project root: repo root. Compose file: `docker-compose.yml` (project name `fitness`).
 
-Flutter SDK runs **on the host** (FVM), not in Compose.
+Flutter SDK runs **on the host** (FVM), not in Compose. From repo root: `./scripts/run-app.sh` (serves `:8080`, does not open a browser) or `./scripts/run-app.sh macos`. From `apps/app`: `../../scripts/run-app.sh`.
 
 ## Services
 

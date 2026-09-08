@@ -25,7 +25,14 @@ Seed:
 | client@fitness.local | Password123! | Участник |
 
 ```bash
-cd apps/app && flutter run -d macos   # или chrome / iPhone
+# из корня репозитория (fitness), не из apps/app
+./scripts/run-app.sh
+# из apps/app:
+../../scripts/run-app.sh
 ```
+
+Сервер: http://localhost:8080 — браузер не открывается, добавьте закладку сами.
+
+Окно приложения (нужен Xcode): `./scripts/run-app.sh macos`
 
 Android emulator: API `http://10.0.2.2:3100`.
