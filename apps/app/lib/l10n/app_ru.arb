@@ -4,6 +4,7 @@
   "login": "Войти",
   "email": "Email",
   "password": "Пароль",
+  "loginFailed": "Неверный email или пароль",
   "schedule": "Расписание",
   "cabinet": "Кабинет",
   "clients": "Клиенты",
@@ -12,7 +13,131 @@
   "cancel": "Отменить",
   "checkIn": "Пришёл",
   "logout": "Выйти",
-  "remainingVisits": "Остаток визитов",
+  "save": "Сохранить",
+  "delete": "Удалить",
+  "dismiss": "Отмена",
+  "retry": "Повторить",
+  "language": "Язык",
+  "languageTitle": "Язык приложения",
   "createRole": "Создать роль",
-  "save": "Сохранить"
+  "profilePage": "Личная страница",
+  "remainingVisits": "Остаток визитов: {count}",
+  "@remainingVisits": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "myBookings": "Мои записи",
+  "balanceHistory": "История баланса",
+  "sessionFallback": "Занятие",
+  "newSession": "Новое занятие",
+  "editSession": "Изменить занятие",
+  "scheduleLoadFailed": "Не удалось загрузить расписание",
+  "trainerLabel": "Тренер: {name}",
+  "@trainerLabel": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "sessionTitle": "Занятие",
+  "noClassTypes": "Нет типов занятий",
+  "classType": "Тип",
+  "date": "Дата",
+  "startTime": "Начало",
+  "durationMin": "Длительность, мин",
+  "room": "Зал",
+  "capacity": "Вместимость",
+  "bookedCount": "Записано: {count}",
+  "@bookedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "checkSessionFields": "Проверьте тип, длительность и вместимость",
+  "capacityBelowBooked": "Вместимость меньше числа записанных ({count})",
+  "@capacityBelowBooked": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "capacityBelowBookedShort": "Вместимость меньше числа записанных",
+  "deleteSessionTitle": "Удалить занятие?",
+  "deleteSessionMessage": "Слот пропадёт из расписания. Сначала снимите все записи.",
+  "sessionHasBookings": "Сначала отмените записи на это занятие",
+  "invalidSessionRange": "Окончание должно быть позже начала",
+  "classTypeNotFound": "Тип занятия не найден",
+  "saveFailed": "Не удалось сохранить",
+  "profile": "Профиль",
+  "member": "Участник",
+  "noData": "Нет данных",
+  "choosePhoto": "Выбрать фото",
+  "deletePhoto": "Удалить фото",
+  "deletePhotoTitle": "Удалить фото?",
+  "deletePhotoMessage": "Фото пропадёт из профиля.",
+  "name": "Имя",
+  "phone": "Телефон",
+  "phoneOptional": "Телефон (необязательно)",
+  "about": "О себе",
+  "aboutOptional": "О себе (необязательно)",
+  "saved": "Сохранено",
+  "loadProfileFailed": "Не удалось загрузить профиль",
+  "photoTooLarge": "Файл больше 512 КБ. Выберите фото меньше.",
+  "photoType": "Нужен JPEG, PNG или WebP до 512 КБ",
+  "deletePhotoFailed": "Не удалось удалить фото",
+  "grantVisits": "Начислить 8 визитов",
+  "visitsGranted": "Начислено 8 визитов",
+  "adjustNote": "Начисление",
+  "newRole": "Новая роль",
+  "rolePermissions": "Права: {name}",
+  "@rolePermissions": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "roleName": "Название",
+  "deleteRoleTitle": "Удалить роль?",
+  "deleteRoleMessage": "Роль «{name}» будет удалена.",
+  "@deleteRoleMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "defaultRoleName": "Ресепшен",
+  "sessionLog": "Журнал занятия",
+  "sessionLogEmpty": "Пока нет записей",
+  "logBooked": "{actor} записался: {target}",
+  "@logBooked": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "target": {"type": "String"}
+    }
+  },
+  "logCancelled": "{actor} отменил запись: {target}",
+  "@logCancelled": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "target": {"type": "String"}
+    }
+  },
+  "logCancelledOther": "{actor} снял с занятия: {target}",
+  "@logCancelledOther": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "target": {"type": "String"}
+    }
+  },
+  "logCheckedIn": "{actor} отметил визит: {target}",
+  "@logCheckedIn": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "target": {"type": "String"}
+    }
+  },
+  "cancelOtherTitle": "Снять с занятия?",
+  "cancelOtherMessage": "{name} будет снят с этого занятия.",
+  "@cancelOtherMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
 }

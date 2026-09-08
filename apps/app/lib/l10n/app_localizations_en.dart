@@ -1,0 +1,278 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get appTitle => 'Fitness';
+
+  @override
+  String get login => 'Sign in';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get loginFailed => 'Wrong email or password';
+
+  @override
+  String get schedule => 'Schedule';
+
+  @override
+  String get cabinet => 'Home';
+
+  @override
+  String get clients => 'Clients';
+
+  @override
+  String get roles => 'Roles';
+
+  @override
+  String get book => 'Book';
+
+  @override
+  String get cancel => 'Cancel booking';
+
+  @override
+  String get checkIn => 'Checked in';
+
+  @override
+  String get logout => 'Log out';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get dismiss => 'Cancel';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get languageTitle => 'App language';
+
+  @override
+  String get createRole => 'Create role';
+
+  @override
+  String get profilePage => 'Your page';
+
+  @override
+  String remainingVisits(int count) {
+    return 'Visits left: $count';
+  }
+
+  @override
+  String get myBookings => 'My bookings';
+
+  @override
+  String get balanceHistory => 'Balance history';
+
+  @override
+  String get sessionFallback => 'Class';
+
+  @override
+  String get newSession => 'New class';
+
+  @override
+  String get editSession => 'Edit class';
+
+  @override
+  String get scheduleLoadFailed => 'Could not load the schedule';
+
+  @override
+  String trainerLabel(String name) {
+    return 'Trainer: $name';
+  }
+
+  @override
+  String get sessionTitle => 'Class';
+
+  @override
+  String get noClassTypes => 'No class types';
+
+  @override
+  String get classType => 'Type';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get startTime => 'Start';
+
+  @override
+  String get durationMin => 'Duration, min';
+
+  @override
+  String get room => 'Room';
+
+  @override
+  String get capacity => 'Capacity';
+
+  @override
+  String bookedCount(int count) {
+    return 'Booked: $count';
+  }
+
+  @override
+  String get checkSessionFields => 'Check type, duration and capacity';
+
+  @override
+  String capacityBelowBooked(int count) {
+    return 'Capacity is below booked spots ($count)';
+  }
+
+  @override
+  String get capacityBelowBookedShort => 'Capacity is below booked spots';
+
+  @override
+  String get deleteSessionTitle => 'Delete this class?';
+
+  @override
+  String get deleteSessionMessage =>
+      'The slot will leave the schedule. Cancel all bookings first.';
+
+  @override
+  String get sessionHasBookings => 'Cancel bookings for this class first';
+
+  @override
+  String get invalidSessionRange => 'End time must be after start';
+
+  @override
+  String get classTypeNotFound => 'Class type not found';
+
+  @override
+  String get saveFailed => 'Could not save';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get member => 'Member';
+
+  @override
+  String get noData => 'No data';
+
+  @override
+  String get choosePhoto => 'Choose photo';
+
+  @override
+  String get deletePhoto => 'Delete photo';
+
+  @override
+  String get deletePhotoTitle => 'Delete photo?';
+
+  @override
+  String get deletePhotoMessage =>
+      'The photo will be removed from the profile.';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get phoneOptional => 'Phone (optional)';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get aboutOptional => 'About (optional)';
+
+  @override
+  String get saved => 'Saved';
+
+  @override
+  String get loadProfileFailed => 'Could not load the profile';
+
+  @override
+  String get photoTooLarge =>
+      'File is larger than 512 KB. Choose a smaller photo.';
+
+  @override
+  String get photoType => 'Use JPEG, PNG or WebP up to 512 KB';
+
+  @override
+  String get deletePhotoFailed => 'Could not delete the photo';
+
+  @override
+  String get grantVisits => 'Add 8 visits';
+
+  @override
+  String get visitsGranted => 'Added 8 visits';
+
+  @override
+  String get adjustNote => 'Credit';
+
+  @override
+  String get newRole => 'New role';
+
+  @override
+  String rolePermissions(String name) {
+    return 'Permissions: $name';
+  }
+
+  @override
+  String get roleName => 'Name';
+
+  @override
+  String get deleteRoleTitle => 'Delete this role?';
+
+  @override
+  String deleteRoleMessage(String name) {
+    return 'The role “$name” will be deleted.';
+  }
+
+  @override
+  String get defaultRoleName => 'Reception';
+
+  @override
+  String get sessionLog => 'Class log';
+
+  @override
+  String get sessionLogEmpty => 'No entries yet';
+
+  @override
+  String logBooked(String actor, String target) {
+    return '$actor booked: $target';
+  }
+
+  @override
+  String logCancelled(String actor, String target) {
+    return '$actor cancelled: $target';
+  }
+
+  @override
+  String logCancelledOther(String actor, String target) {
+    return '$actor removed: $target';
+  }
+
+  @override
+  String logCheckedIn(String actor, String target) {
+    return '$actor checked in: $target';
+  }
+
+  @override
+  String get cancelOtherTitle => 'Remove from class?';
+
+  @override
+  String cancelOtherMessage(String name) {
+    return '$name will be removed from this class.';
+  }
+}

@@ -1,4 +1,7 @@
+import 'package:fitness_app/core/confirm_delete.dart';
+import 'package:fitness_app/core/logout_button.dart';
 import 'package:fitness_app/features/schedule/application/schedule_providers.dart';
+import 'package:fitness_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,14 +36,17 @@ class _RolesScreenState extends ConsumerState<RolesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Роли'),
+        title: Text(l10n.roles),
         actions: [
           IconButton(
+            tooltip: l10n.createRole,
             icon: const Icon(Icons.add),
             onPressed: () => _edit(null),
           ),
+          const LogoutButton(),
         ],
       ),
       body: _loading
@@ -69,14 +75,15 @@ class _RolesScreenState extends ConsumerState<RolesScreen> {
         for (final p in (role['permissions'] as List<dynamic>? ?? []))
           ((p as Map)['permission']?['slug'] as String?) ?? '',
     }..remove('');
-    final nameCtrl = TextEditingController(text: role?['name'] as String? ?? 'Ресепшен');
-    final ok = await showDialog<bool>(
+    final l10n = AppLocalizations.of(context);
+    final nameCtrl = TextEditingController(text: role?['name'] as String? ?? l10n.defaultRoleName);
+    final result = await showDialog<_RoleDialogResult>(
       context: context,
       builder: (ctx) {
         return StatefulBuilder(
           builder: (context, setLocal) {
             return AlertDialog(
-              title: Text(role == null ? 'Новая роль' : 'Права: ${role['name']}'),
+              title: Text(role == null ? l10n.newRole : l10n.rolePermissions(role['name'] as String)),
               content: SizedBox(
                 width: 420,
                 child: SingleChildScrollView(
@@ -84,7 +91,7 @@ class _RolesScreenState extends ConsumerState<RolesScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (role == null || role['isSystem'] != true)
-                        TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Название')),
+                        TextField(controller: nameCtrl, decoration: InputDecoration(labelText: l10n.roleName)),
                       for (final p in _perms)
                         CheckboxListTile(
                           title: Text(p['name'] as String),
@@ -108,22 +115,34 @@ class _RolesScreenState extends ConsumerState<RolesScreen> {
                 if (role != null && role['isSystem'] != true)
                   TextButton(
                     onPressed: () async {
+                      final sure = await confirmDelete(
+                        ctx,
+                        title: l10n.deleteRoleTitle,
+                        message: l10n.deleteRoleMessage(role['name'] as String),
+                      );
+                      if (sure != true || !ctx.mounted) {
+                        return;
+                      }
                       await ref.read(studioRepositoryProvider).deleteRole(role['id'] as String);
                       if (ctx.mounted) {
-                        Navigator.pop(ctx, true);
+                        Navigator.pop(ctx, _RoleDialogResult.deleted);
                       }
                     },
-                    child: const Text('Удалить'),
+                    child: Text(l10n.delete),
                   ),
-                TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Отмена')),
-                FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Сохранить')),
+                TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.dismiss)),
+                FilledButton(onPressed: () => Navigator.pop(ctx, _RoleDialogResult.save), child: Text(l10n.save)),
               ],
             );
           },
         );
       },
     );
-    if (ok != true) {
+    if (result == _RoleDialogResult.deleted) {
+      await _reload();
+      return;
+    }
+    if (result != _RoleDialogResult.save) {
       return;
     }
     final slugs = selected.toList();
@@ -135,3 +154,5 @@ class _RolesScreenState extends ConsumerState<RolesScreen> {
     await _reload();
   }
 }
+
+enum _RoleDialogResult { save, deleted }

@@ -1,4 +1,6 @@
+import 'package:fitness_app/core/language_picker.dart';
 import 'package:fitness_app/features/auth/application/auth_controller.dart';
+import 'package:fitness_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,6 +25,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authControllerProvider);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: Center(
         child: ConstrainedBox(
@@ -32,17 +35,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Fitness', style: Theme.of(context).textTheme.headlineMedium),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    tooltip: l10n.language,
+                    onPressed: () => showLanguagePicker(context, ref),
+                    icon: const Icon(Icons.language),
+                  ),
+                ),
+                Text(l10n.appTitle, style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 24),
                 TextField(
                   controller: _email,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(labelText: l10n.email),
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: _password,
-                  decoration: const InputDecoration(labelText: 'Пароль'),
+                  decoration: InputDecoration(labelText: l10n.password),
                   obscureText: true,
                 ),
                 const SizedBox(height: 24),
@@ -50,7 +61,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Text(
-                      'Неверный email или пароль',
+                      l10n.loginFailed,
                       style: TextStyle(color: Theme.of(context).colorScheme.error),
                     ),
                   ),
@@ -67,7 +78,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           height: 16,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Войти'),
+                      : Text(l10n.login),
                 ),
               ],
             ),

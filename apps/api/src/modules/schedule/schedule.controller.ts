@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { AuthUser } from '../../common/auth.types';
 import { CurrentUser } from '../../common/current-user.decorator';
@@ -41,6 +41,12 @@ export class ScheduleController {
   @RequirePermission('manage_schedule')
   createSession(@CurrentUser() user: AuthUser, @Body() dto: CreateSessionDto) {
     return this.schedule.createSession(user, dto);
+  }
+
+  @Patch('sessions/:id')
+  @RequirePermission('manage_schedule')
+  updateSession(@CurrentUser() user: AuthUser, @Param('id') id: string, @Body() dto: CreateSessionDto) {
+    return this.schedule.updateSession(user, id, dto);
   }
 
   @Delete('sessions/:id')

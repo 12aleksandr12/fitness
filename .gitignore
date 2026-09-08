@@ -19,3 +19,5 @@ apps/app/.flutter-plugins-dependencies
 apps/app/*.iml
 .fvm/flutter_sdk
 apps/app/.widget_preview/
+apps/api/uploads/*
+!apps/api/uploads/.gitkeep

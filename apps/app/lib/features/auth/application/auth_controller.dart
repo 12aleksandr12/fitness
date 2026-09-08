@@ -1,12 +1,7 @@
-import 'package:fitness_app/core/api_client.dart';
-import 'package:fitness_app/core/token_store.dart';
+import 'package:fitness_app/core/providers.dart';
 import 'package:fitness_app/features/auth/data/auth_repository.dart';
 import 'package:fitness_app/features/auth/data/auth_user.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final tokenStoreProvider = Provider<TokenStore>((ref) => TokenStore());
-
-final dioProvider = Provider((ref) => createDio(ref.watch(tokenStoreProvider)));
 
 final authRepositoryProvider = Provider(
   (ref) => AuthRepository(ref.watch(dioProvider), ref.watch(tokenStoreProvider)),

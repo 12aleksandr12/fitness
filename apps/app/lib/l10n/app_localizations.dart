@@ -5,7 +5,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
+import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
 import 'app_localizations_ru.dart';
+import 'app_localizations_uk.dart';
 
 // ignore_for_file: type=lint
 
@@ -66,8 +71,8 @@ abstract class AppLocalizations {
 
   final String localeName;
 
-  static AppLocalizations? of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
@@ -92,7 +97,14 @@ abstract class AppLocalizations {
   ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('ru')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
+    Locale('en'),
+    Locale('es'),
+    Locale('fr'),
+    Locale('ru'),
+    Locale('uk')
+  ];
 
   /// No description provided for @appTitle.
   ///
@@ -117,6 +129,12 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Пароль'**
   String get password;
+
+  /// No description provided for @loginFailed.
+  ///
+  /// In ru, this message translates to:
+  /// **'Неверный email или пароль'**
+  String get loginFailed;
 
   /// No description provided for @schedule.
   ///
@@ -166,11 +184,41 @@ abstract class AppLocalizations {
   /// **'Выйти'**
   String get logout;
 
-  /// No description provided for @remainingVisits.
+  /// No description provided for @save.
   ///
   /// In ru, this message translates to:
-  /// **'Остаток визитов'**
-  String get remainingVisits;
+  /// **'Сохранить'**
+  String get save;
+
+  /// No description provided for @delete.
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить'**
+  String get delete;
+
+  /// No description provided for @dismiss.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отмена'**
+  String get dismiss;
+
+  /// No description provided for @retry.
+  ///
+  /// In ru, this message translates to:
+  /// **'Повторить'**
+  String get retry;
+
+  /// No description provided for @language.
+  ///
+  /// In ru, this message translates to:
+  /// **'Язык'**
+  String get language;
+
+  /// No description provided for @languageTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Язык приложения'**
+  String get languageTitle;
 
   /// No description provided for @createRole.
   ///
@@ -178,11 +226,371 @@ abstract class AppLocalizations {
   /// **'Создать роль'**
   String get createRole;
 
-  /// No description provided for @save.
+  /// No description provided for @profilePage.
   ///
   /// In ru, this message translates to:
-  /// **'Сохранить'**
-  String get save;
+  /// **'Личная страница'**
+  String get profilePage;
+
+  /// No description provided for @remainingVisits.
+  ///
+  /// In ru, this message translates to:
+  /// **'Остаток визитов: {count}'**
+  String remainingVisits(int count);
+
+  /// No description provided for @myBookings.
+  ///
+  /// In ru, this message translates to:
+  /// **'Мои записи'**
+  String get myBookings;
+
+  /// No description provided for @balanceHistory.
+  ///
+  /// In ru, this message translates to:
+  /// **'История баланса'**
+  String get balanceHistory;
+
+  /// No description provided for @sessionFallback.
+  ///
+  /// In ru, this message translates to:
+  /// **'Занятие'**
+  String get sessionFallback;
+
+  /// No description provided for @newSession.
+  ///
+  /// In ru, this message translates to:
+  /// **'Новое занятие'**
+  String get newSession;
+
+  /// No description provided for @editSession.
+  ///
+  /// In ru, this message translates to:
+  /// **'Изменить занятие'**
+  String get editSession;
+
+  /// No description provided for @scheduleLoadFailed.
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось загрузить расписание'**
+  String get scheduleLoadFailed;
+
+  /// No description provided for @trainerLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Тренер: {name}'**
+  String trainerLabel(String name);
+
+  /// No description provided for @sessionTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Занятие'**
+  String get sessionTitle;
+
+  /// No description provided for @noClassTypes.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет типов занятий'**
+  String get noClassTypes;
+
+  /// No description provided for @classType.
+  ///
+  /// In ru, this message translates to:
+  /// **'Тип'**
+  String get classType;
+
+  /// No description provided for @date.
+  ///
+  /// In ru, this message translates to:
+  /// **'Дата'**
+  String get date;
+
+  /// No description provided for @startTime.
+  ///
+  /// In ru, this message translates to:
+  /// **'Начало'**
+  String get startTime;
+
+  /// No description provided for @durationMin.
+  ///
+  /// In ru, this message translates to:
+  /// **'Длительность, мин'**
+  String get durationMin;
+
+  /// No description provided for @room.
+  ///
+  /// In ru, this message translates to:
+  /// **'Зал'**
+  String get room;
+
+  /// No description provided for @capacity.
+  ///
+  /// In ru, this message translates to:
+  /// **'Вместимость'**
+  String get capacity;
+
+  /// No description provided for @bookedCount.
+  ///
+  /// In ru, this message translates to:
+  /// **'Записано: {count}'**
+  String bookedCount(int count);
+
+  /// No description provided for @checkSessionFields.
+  ///
+  /// In ru, this message translates to:
+  /// **'Проверьте тип, длительность и вместимость'**
+  String get checkSessionFields;
+
+  /// No description provided for @capacityBelowBooked.
+  ///
+  /// In ru, this message translates to:
+  /// **'Вместимость меньше числа записанных ({count})'**
+  String capacityBelowBooked(int count);
+
+  /// No description provided for @capacityBelowBookedShort.
+  ///
+  /// In ru, this message translates to:
+  /// **'Вместимость меньше числа записанных'**
+  String get capacityBelowBookedShort;
+
+  /// No description provided for @deleteSessionTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить занятие?'**
+  String get deleteSessionTitle;
+
+  /// No description provided for @deleteSessionMessage.
+  ///
+  /// In ru, this message translates to:
+  /// **'Слот пропадёт из расписания. Сначала снимите все записи.'**
+  String get deleteSessionMessage;
+
+  /// No description provided for @sessionHasBookings.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сначала отмените записи на это занятие'**
+  String get sessionHasBookings;
+
+  /// No description provided for @invalidSessionRange.
+  ///
+  /// In ru, this message translates to:
+  /// **'Окончание должно быть позже начала'**
+  String get invalidSessionRange;
+
+  /// No description provided for @classTypeNotFound.
+  ///
+  /// In ru, this message translates to:
+  /// **'Тип занятия не найден'**
+  String get classTypeNotFound;
+
+  /// No description provided for @saveFailed.
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось сохранить'**
+  String get saveFailed;
+
+  /// No description provided for @profile.
+  ///
+  /// In ru, this message translates to:
+  /// **'Профиль'**
+  String get profile;
+
+  /// No description provided for @member.
+  ///
+  /// In ru, this message translates to:
+  /// **'Участник'**
+  String get member;
+
+  /// No description provided for @noData.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет данных'**
+  String get noData;
+
+  /// No description provided for @choosePhoto.
+  ///
+  /// In ru, this message translates to:
+  /// **'Выбрать фото'**
+  String get choosePhoto;
+
+  /// No description provided for @deletePhoto.
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить фото'**
+  String get deletePhoto;
+
+  /// No description provided for @deletePhotoTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить фото?'**
+  String get deletePhotoTitle;
+
+  /// No description provided for @deletePhotoMessage.
+  ///
+  /// In ru, this message translates to:
+  /// **'Фото пропадёт из профиля.'**
+  String get deletePhotoMessage;
+
+  /// No description provided for @name.
+  ///
+  /// In ru, this message translates to:
+  /// **'Имя'**
+  String get name;
+
+  /// No description provided for @phone.
+  ///
+  /// In ru, this message translates to:
+  /// **'Телефон'**
+  String get phone;
+
+  /// No description provided for @phoneOptional.
+  ///
+  /// In ru, this message translates to:
+  /// **'Телефон (необязательно)'**
+  String get phoneOptional;
+
+  /// No description provided for @about.
+  ///
+  /// In ru, this message translates to:
+  /// **'О себе'**
+  String get about;
+
+  /// No description provided for @aboutOptional.
+  ///
+  /// In ru, this message translates to:
+  /// **'О себе (необязательно)'**
+  String get aboutOptional;
+
+  /// No description provided for @saved.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сохранено'**
+  String get saved;
+
+  /// No description provided for @loadProfileFailed.
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось загрузить профиль'**
+  String get loadProfileFailed;
+
+  /// No description provided for @photoTooLarge.
+  ///
+  /// In ru, this message translates to:
+  /// **'Файл больше 512 КБ. Выберите фото меньше.'**
+  String get photoTooLarge;
+
+  /// No description provided for @photoType.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нужен JPEG, PNG или WebP до 512 КБ'**
+  String get photoType;
+
+  /// No description provided for @deletePhotoFailed.
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось удалить фото'**
+  String get deletePhotoFailed;
+
+  /// No description provided for @grantVisits.
+  ///
+  /// In ru, this message translates to:
+  /// **'Начислить 8 визитов'**
+  String get grantVisits;
+
+  /// No description provided for @visitsGranted.
+  ///
+  /// In ru, this message translates to:
+  /// **'Начислено 8 визитов'**
+  String get visitsGranted;
+
+  /// No description provided for @adjustNote.
+  ///
+  /// In ru, this message translates to:
+  /// **'Начисление'**
+  String get adjustNote;
+
+  /// No description provided for @newRole.
+  ///
+  /// In ru, this message translates to:
+  /// **'Новая роль'**
+  String get newRole;
+
+  /// No description provided for @rolePermissions.
+  ///
+  /// In ru, this message translates to:
+  /// **'Права: {name}'**
+  String rolePermissions(String name);
+
+  /// No description provided for @roleName.
+  ///
+  /// In ru, this message translates to:
+  /// **'Название'**
+  String get roleName;
+
+  /// No description provided for @deleteRoleTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Удалить роль?'**
+  String get deleteRoleTitle;
+
+  /// No description provided for @deleteRoleMessage.
+  ///
+  /// In ru, this message translates to:
+  /// **'Роль «{name}» будет удалена.'**
+  String deleteRoleMessage(String name);
+
+  /// No description provided for @defaultRoleName.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ресепшен'**
+  String get defaultRoleName;
+
+  /// No description provided for @sessionLog.
+  ///
+  /// In ru, this message translates to:
+  /// **'Журнал занятия'**
+  String get sessionLog;
+
+  /// No description provided for @sessionLogEmpty.
+  ///
+  /// In ru, this message translates to:
+  /// **'Пока нет записей'**
+  String get sessionLogEmpty;
+
+  /// No description provided for @logBooked.
+  ///
+  /// In ru, this message translates to:
+  /// **'{actor} записался: {target}'**
+  String logBooked(String actor, String target);
+
+  /// No description provided for @logCancelled.
+  ///
+  /// In ru, this message translates to:
+  /// **'{actor} отменил запись: {target}'**
+  String logCancelled(String actor, String target);
+
+  /// No description provided for @logCancelledOther.
+  ///
+  /// In ru, this message translates to:
+  /// **'{actor} снял с занятия: {target}'**
+  String logCancelledOther(String actor, String target);
+
+  /// No description provided for @logCheckedIn.
+  ///
+  /// In ru, this message translates to:
+  /// **'{actor} отметил визит: {target}'**
+  String logCheckedIn(String actor, String target);
+
+  /// No description provided for @cancelOtherTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Снять с занятия?'**
+  String get cancelOtherTitle;
+
+  /// No description provided for @cancelOtherMessage.
+  ///
+  /// In ru, this message translates to:
+  /// **'{name} будет снят с этого занятия.'**
+  String cancelOtherMessage(String name);
 }
 
 class _AppLocalizationsDelegate
@@ -195,8 +603,14 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['ru'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+        'de',
+        'en',
+        'es',
+        'fr',
+        'ru',
+        'uk'
+      ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -205,8 +619,18 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
     case 'ru':
       return AppLocalizationsRu();
+    case 'uk':
+      return AppLocalizationsUk();
   }
 
   throw FlutterError(
