@@ -5,8 +5,13 @@ import type { AuthUser } from '../../common/auth.types';
 import { AppError } from '../../common/errors';
 import { PrismaService } from '../../common/prisma.service';
 import type { BookDto } from './dto/booking.dto';
+import { purgeEndedSessionLogs, SESSION_LOG, writeSessionLog } from './session-log';
 
 const HOLDING: BookingStatus[] = [BookingStatus.booked, BookingStatus.attended];
+
+function canCancelOthers(actor: AuthUser) {
+  return actor.permissions.includes('book_others') || actor.permissions.includes('manage_schedule');
+}
 
 @Injectable()
 export class BookingService {
@@ -47,51 +52,63 @@ export class BookingService {
         throw new AppError(HttpStatus.CONFLICT, 'BOOKING_FULL', 'Session is full');
       }
 
-      if (existing) {
-        return tx.booking.update({
-          where: { id: existing.id },
-          data: { status: BookingStatus.booked },
-        });
-      }
-      return tx.booking.create({
-        data: {
-          id: uuidv7(),
-          studioId: actor.studioId,
-          sessionId,
-          userId: targetUserId,
-          status: BookingStatus.booked,
-        },
+      const row = existing
+        ? await tx.booking.update({
+            where: { id: existing.id },
+            data: { status: BookingStatus.booked },
+          })
+        : await tx.booking.create({
+            data: {
+              id: uuidv7(),
+              studioId: actor.studioId,
+              sessionId,
+              userId: targetUserId,
+              status: BookingStatus.booked,
+            },
+          });
+      await writeSessionLog(tx, {
+        studioId: actor.studioId,
+        sessionId,
+        actorId: actor.userId,
+        targetId: targetUserId,
+        action: SESSION_LOG.booked,
       });
+      return row;
     });
   }
 
   async cancel(actor: AuthUser, bookingId: string) {
-    const booking = await this.prisma.booking.findFirst({
-      where: { id: bookingId, studioId: actor.studioId },
-      include: { session: { include: { studio: true } } },
-    });
-    if (!booking) {
-      throw new AppError(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Booking not found');
-    }
-    if (booking.userId !== actor.userId && !actor.permissions.includes('book_others')) {
-      throw new AppError(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Cannot cancel this booking');
-    }
-    if (booking.status !== BookingStatus.booked) {
-      throw new AppError(HttpStatus.BAD_REQUEST, 'NOT_CANCELLABLE', 'Booking cannot be cancelled');
-    }
-    const hours =
-      (booking.session.startsAt.getTime() - Date.now()) / 3600000;
-    const canOverride = actor.permissions.includes('manage_schedule');
-    if (!canOverride && hours < booking.session.studio.cancellationHoursBefore) {
-      throw new AppError(
-        HttpStatus.BAD_REQUEST,
-        'CANCEL_TOO_LATE',
-        'Too late to cancel',
-      );
-    }
-    return this.prisma.booking.update({
-      where: { id: booking.id },
-      data: { status: BookingStatus.cancelled },
+    return this.prisma.$transaction(async (tx) => {
+      const booking = await tx.booking.findFirst({
+        where: { id: bookingId, studioId: actor.studioId },
+        include: { session: { include: { studio: true } } },
+      });
+      if (!booking) {
+        throw new AppError(HttpStatus.NOT_FOUND, 'BOOKING_NOT_FOUND', 'Booking not found');
+      }
+      if (booking.userId !== actor.userId && !canCancelOthers(actor)) {
+        throw new AppError(HttpStatus.FORBIDDEN, 'FORBIDDEN', 'Cannot cancel this booking');
+      }
+      if (booking.status !== BookingStatus.booked) {
+        throw new AppError(HttpStatus.BAD_REQUEST, 'NOT_CANCELLABLE', 'Booking cannot be cancelled');
+      }
+      const hours = (booking.session.startsAt.getTime() - Date.now()) / 3600000;
+      const canOverride = actor.permissions.includes('manage_schedule');
+      if (!canOverride && hours < booking.session.studio.cancellationHoursBefore) {
+        throw new AppError(HttpStatus.BAD_REQUEST, 'CANCEL_TOO_LATE', 'Too late to cancel');
+      }
+      const row = await tx.booking.update({
+        where: { id: booking.id },
+        data: { status: BookingStatus.cancelled },
+      });
+      await writeSessionLog(tx, {
+        studioId: actor.studioId,
+        sessionId: booking.sessionId,
+        actorId: actor.userId,
+        targetId: booking.userId,
+        action: booking.userId === actor.userId ? SESSION_LOG.cancelled : SESSION_LOG.cancelledOther,
+      });
+      return row;
     });
   }
 
@@ -131,11 +148,47 @@ export class BookingService {
           note: 'Check-in',
         },
       });
-      return tx.booking.update({
+      const row = await tx.booking.update({
         where: { id: booking.id },
         data: { status: BookingStatus.attended },
       });
+      await writeSessionLog(tx, {
+        studioId: actor.studioId,
+        sessionId: booking.sessionId,
+        actorId: actor.userId,
+        targetId: booking.userId,
+        action: SESSION_LOG.checkedIn,
+      });
+      return row;
     });
+  }
+
+  async listLog(actor: AuthUser, sessionId: string) {
+    await purgeEndedSessionLogs(this.prisma, actor.studioId);
+    const session = await this.prisma.session.findFirst({
+      where: { id: sessionId, studioId: actor.studioId },
+    });
+    if (!session) {
+      throw new AppError(HttpStatus.NOT_FOUND, 'SESSION_NOT_FOUND', 'Session not found');
+    }
+    if (session.endsAt <= new Date()) {
+      return [];
+    }
+    const rows = await this.prisma.sessionLog.findMany({
+      where: { studioId: actor.studioId, sessionId },
+      include: {
+        actor: { select: { id: true, name: true } },
+        target: { select: { id: true, name: true } },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+    return rows.map((row) => ({
+      id: row.id,
+      action: row.action,
+      createdAt: row.createdAt,
+      actor: row.actor,
+      target: row.target,
+    }));
   }
 
   myBookings(actor: AuthUser) {

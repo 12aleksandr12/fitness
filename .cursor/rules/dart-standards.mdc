@@ -6,9 +6,10 @@ globs: apps/app/**/*.dart
 # Dart standards
 
 - `type` aliases over redundant wrappers. Prefer explicit types on public APIs.
-- Models: `freezed` (or equivalent generated DTO from OpenAPI). No hand-written `==` / `copyWith`.
-- State: Riverpod (`@riverpod` / `Notifier`). No GetX, Bloc, Provider+GetIt.
-- Screens do not call `Dio` or know URL paths — only repositories in `data/`.
+- Models: `Map<String, dynamic>` is OK for one screen. Same shape on a 2nd screen → extract a type (`typedef` / class / later `freezed`). Do not add codegen for a single `AuthUser`. No hand-written `==` / `copyWith` unless generated.
+- State: Riverpod. `dioProvider` / `tokenStoreProvider` only in `lib/core/providers.dart`. No GetX, Bloc, Provider+GetIt.
+- Screens and dialogs do not import `dio` and do not know URL paths — only repositories in that feature's `data/`. API `code` → user text: one helper in `lib/core` on the 2nd copy.
+- Repository per feature (`auth`, `schedule`, `users`, `roles`, …). Do not grow a god `StudioRepository`. New endpoint → existing feature repo if that domain already has one.
 - `flutter_secure_storage` for refresh tokens. Not `SharedPreferences`.
 - `avoid_print` in production paths; use a logger if needed.
 - Generated files (`*.g.dart`, `*.freezed.dart`) are not edited by hand.

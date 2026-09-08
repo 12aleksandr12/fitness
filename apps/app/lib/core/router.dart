@@ -3,6 +3,7 @@ import 'package:fitness_app/features/auth/application/auth_controller.dart';
 import 'package:fitness_app/features/auth/presentation/login_screen.dart';
 import 'package:fitness_app/features/cabinet/presentation/cabinet_screen.dart';
 import 'package:fitness_app/features/clients/presentation/clients_screen.dart';
+import 'package:fitness_app/features/profile/presentation/profile_screen.dart';
 import 'package:fitness_app/features/roles/presentation/roles_screen.dart';
 import 'package:fitness_app/features/schedule/presentation/schedule_screen.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: '/schedule', builder: (c, s) => const ScheduleScreen()),
           GoRoute(path: '/cabinet', builder: (c, s) => const CabinetScreen()),
+          GoRoute(
+            path: '/people/:userId',
+            builder: (c, s) => ProfileScreen(userId: s.pathParameters['userId']!),
+          ),
           GoRoute(path: '/clients', builder: (c, s) => const ClientsScreen()),
           GoRoute(path: '/roles', builder: (c, s) => const RolesScreen()),
         ],

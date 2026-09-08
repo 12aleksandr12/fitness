@@ -20,6 +20,11 @@ export class BookingController {
     return this.bookings.myBookings(user);
   }
 
+  @Get('sessions/:id/log')
+  listLog(@CurrentUser() user: AuthUser, @Param('id') id: string) {
+    return this.bookings.listLog(user, id);
+  }
+
   @Post('sessions/:id/book')
   book(@CurrentUser() user: AuthUser, @Param('id') id: string, @Body() dto: BookDto) {
     return this.bookings.book(user, id, dto);

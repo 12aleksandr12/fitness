@@ -71,5 +71,7 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Чтобы выбрать фото для профиля</string>
 </dict>
 </plist>

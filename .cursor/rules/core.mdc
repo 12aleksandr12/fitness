@@ -25,9 +25,11 @@ Minimal diffs. No drive-by refactors, unrelated files, or speculative layers (no
 
 SOLID · KISS · DRY · YAGNI · Tell-Don't-Ask · Law of Demeter.
 
-- **KISS / YAGNI** — Controller → Service → Prisma; Widget → Riverpod → Repository. No MediatR, no GetX, no GetIt.
+- **KISS / YAGNI** — Controller → Service → Prisma; Widget → Riverpod → Repository. No MediatR, no GetX, no GetIt. No extra folder «just in case».
+- **SOLID (практика)** — один повод менять класс: HTTP в controller, правила в service, HTTP клиента в `data/`. Не раздувать один repository на все домены.
 - **Permissions, not platform** — hide UI by slug (`manage_roles`, …), never `if (Platform.isIOS) hide(feature)`.
-- **DRY** — extract on the 2nd occurrence.
+- **DRY** — extract on the 2nd occurrence. Second copy of the same mapper, select, or error text is a defect: reuse or extract, do not invent a parallel helper.
+- **Tell-Don't-Ask / Demeter** — UI asks a repository for a use case (`book`, `profile`), not for raw nested maps to pick fields across 3 objects.
 
 ## Rule map
 

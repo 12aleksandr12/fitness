@@ -38,6 +38,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       userId: membership.userId,
       email: membership.user.email,
       name: membership.user.name,
+      hasPhoto: Boolean(membership.user.photoExt),
       studioId: membership.studioId,
       membershipId: membership.id,
       roleId: membership.roleId,
