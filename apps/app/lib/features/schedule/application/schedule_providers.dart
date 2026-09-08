@@ -1,3 +1,4 @@
+import 'package:fitness_app/core/providers.dart';
 import 'package:fitness_app/features/auth/application/auth_controller.dart';
 import 'package:fitness_app/features/schedule/data/studio_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,10 @@ final studioRepositoryProvider = Provider(
 );
 
 final weekSessionsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final auth = await ref.watch(authControllerProvider.future);
+  if (auth == null) {
+    return [];
+  }
   final now = DateTime.now().toUtc();
   final from = DateTime.utc(now.year, now.month, now.day);
   return ref.read(studioRepositoryProvider).sessions(

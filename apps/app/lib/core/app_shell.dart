@@ -1,6 +1,7 @@
 import 'package:fitness_app/core/permissions.dart';
 import 'package:fitness_app/core/theme.dart';
 import 'package:fitness_app/features/auth/application/auth_controller.dart';
+import 'package:fitness_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,13 +15,14 @@ class AppShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authControllerProvider).valueOrNull;
     final perms = user?.permissions ?? [];
+    final l10n = AppLocalizations.of(context);
     final destinations = <_Dest>[
-      const _Dest('/schedule', Icons.calendar_month, 'Расписание', null),
-      const _Dest('/cabinet', Icons.person, 'Кабинет', null),
+      _Dest('/schedule', Icons.calendar_month, l10n.schedule, null),
+      _Dest('/cabinet', Icons.person, l10n.cabinet, null),
       if (perms.contains(Permissions.viewClients) || perms.contains(Permissions.adjustBalance))
-        const _Dest('/clients', Icons.groups, 'Клиенты', Permissions.viewClients),
+        _Dest('/clients', Icons.groups, l10n.clients, Permissions.viewClients),
       if (perms.contains(Permissions.manageRoles))
-        const _Dest('/roles', Icons.admin_panel_settings, 'Роли', Permissions.manageRoles),
+        _Dest('/roles', Icons.admin_panel_settings, l10n.roles, Permissions.manageRoles),
     ];
 
     return LayoutBuilder(
@@ -68,16 +70,6 @@ class AppShell extends ConsumerWidget {
                     onDestinationSelected: go,
                     labelType: NavigationRailLabelType.all,
                     destinations: rail,
-                    trailing: Expanded(
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: IconButton(
-                          tooltip: 'Выйти',
-                          onPressed: () => ref.read(authControllerProvider.notifier).logout(),
-                          icon: const Icon(Icons.logout),
-                        ),
-                      ),
-                    ),
                   ),
                   const VerticalDivider(width: 1),
                   Expanded(child: child),
@@ -88,12 +80,6 @@ class AppShell extends ConsumerWidget {
         return Scaffold(
           body: body,
           bottomNavigationBar: bar,
-          floatingActionButton: expanded
-              ? null
-              : IconButton.filledTonal(
-                  onPressed: () => ref.read(authControllerProvider.notifier).logout(),
-                  icon: const Icon(Icons.logout),
-                ),
         );
       },
     );

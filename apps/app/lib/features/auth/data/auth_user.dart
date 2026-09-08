@@ -7,6 +7,7 @@ class AuthUser {
     required this.roleId,
     required this.roleName,
     required this.permissions,
+    this.hasPhoto = false,
   });
 
   final String userId;
@@ -16,6 +17,7 @@ class AuthUser {
   final String roleId;
   final String roleName;
   final List<String> permissions;
+  final bool hasPhoto;
 
   factory AuthUser.fromJson(Map<String, dynamic> json) {
     return AuthUser(
@@ -26,6 +28,7 @@ class AuthUser {
       roleId: json['roleId'] as String,
       roleName: json['roleName'] as String,
       permissions: (json['permissions'] as List<dynamic>).cast<String>(),
+      hasPhoto: json['hasPhoto'] == true,
     );
   }
 
