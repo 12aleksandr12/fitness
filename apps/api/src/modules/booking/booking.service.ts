@@ -4,7 +4,7 @@ import { v7 as uuidv7 } from 'uuid';
 import type { AuthUser } from '../../common/auth.types';
 import { AppError } from '../../common/errors';
 import { PrismaService } from '../../common/prisma.service';
-import type { BookDto } from './dto/booking.dto';
+import type { BookDto, CancelDto } from './dto/booking.dto';
 import { purgeEndedSessionLogs, SESSION_LOG, writeSessionLog } from './session-log';
 
 const HOLDING: BookingStatus[] = [BookingStatus.booked, BookingStatus.attended];
@@ -77,7 +77,7 @@ export class BookingService {
     });
   }
 
-  async cancel(actor: AuthUser, bookingId: string) {
+  async cancel(actor: AuthUser, bookingId: string, dto: CancelDto = {}) {
     return this.prisma.$transaction(async (tx) => {
       const booking = await tx.booking.findFirst({
         where: { id: bookingId, studioId: actor.studioId },
@@ -107,6 +107,7 @@ export class BookingService {
         actorId: actor.userId,
         targetId: booking.userId,
         action: booking.userId === actor.userId ? SESSION_LOG.cancelled : SESSION_LOG.cancelledOther,
+        comment: dto.comment,
       });
       return row;
     });
@@ -185,6 +186,7 @@ export class BookingService {
     return rows.map((row) => ({
       id: row.id,
       action: row.action,
+      comment: row.comment,
       createdAt: row.createdAt,
       actor: row.actor,
       target: row.target,

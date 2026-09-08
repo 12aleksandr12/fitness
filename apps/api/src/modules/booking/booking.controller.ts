@@ -6,7 +6,7 @@ import { JwtAuthGuard } from '../../common/jwt-auth.guard';
 import { PermissionsGuard } from '../../common/permissions.guard';
 import { RequirePermission } from '../../common/require-permission.decorator';
 import { BookingService } from './booking.service';
-import { BookDto } from './dto/booking.dto';
+import { BookDto, CancelDto } from './dto/booking.dto';
 
 @ApiTags('bookings')
 @ApiBearerAuth()
@@ -31,8 +31,8 @@ export class BookingController {
   }
 
   @Post('bookings/:id/cancel')
-  cancel(@CurrentUser() user: AuthUser, @Param('id') id: string) {
-    return this.bookings.cancel(user, id);
+  cancel(@CurrentUser() user: AuthUser, @Param('id') id: string, @Body() dto: CancelDto) {
+    return this.bookings.cancel(user, id, dto);
   }
 
   @Post('bookings/:id/check-in')

@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class BookDto {
@@ -6,4 +6,12 @@ export class BookDto {
   @IsOptional()
   @IsString()
   userId?: string;
+}
+
+export class CancelDto {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  comment?: string;
 }

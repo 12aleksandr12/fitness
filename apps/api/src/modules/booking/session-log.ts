@@ -25,8 +25,10 @@ export function writeSessionLog(
     actorId: string;
     targetId: string;
     action: string;
+    comment?: string | null;
   },
 ) {
+  const comment = input.comment?.trim() || null;
   return db.sessionLog.create({
     data: {
       id: uuidv7(),
@@ -35,6 +37,7 @@ export function writeSessionLog(
       actorId: input.actorId,
       targetId: input.targetId,
       action: input.action,
+      comment,
     },
   });
 }
