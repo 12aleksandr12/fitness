@@ -8,7 +8,7 @@ globs: apps/app/**/*.dart
 - `type` aliases over redundant wrappers. Prefer explicit types on public APIs.
 - Models: `Map<String, dynamic>` is OK for one screen. Same shape on a 2nd screen → extract a type (`typedef` / class / later `freezed`). Do not add codegen for a single `AuthUser`. No hand-written `==` / `copyWith` unless generated.
 - State: Riverpod. `dioProvider` / `tokenStoreProvider` only in `lib/core/providers.dart`. No GetX, Bloc, Provider+GetIt.
-- Screens and dialogs do not import `dio` and do not know URL paths — only repositories in that feature's `data/`. API `code` → user text: one helper in `lib/core` on the 2nd copy.
+- Screens and dialogs do not import `dio` and do not know URL paths — only repositories in that feature's `data/`. API `code` → user text: extract to `lib/core` when the **same** `code` is mapped in 2+ screens. Different codes stay next to the screen (`LAST_MANAGE_ROLES` vs `SESSION_HAS_BOOKINGS` are not one mapper).
 - Repository per feature (`auth`, `schedule`, `users`, `roles`, …). Do not grow a god `StudioRepository`. New endpoint → existing feature repo if that domain already has one.
 - `flutter_secure_storage` for refresh tokens. Not `SharedPreferences`.
 - `avoid_print` in production paths; use a logger if needed.

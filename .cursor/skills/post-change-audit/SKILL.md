@@ -13,7 +13,7 @@ Opt-in. **Never** after every `Write`. **Never** from a Plan todo named audit.
 
 ## How the parent launches
 
-`Task` (`generalPurpose`): run `git diff`, follow this skill, revert drive-by / YAGNI. Return 1–2 sentences + reverted paths.
+`Task` (`generalPurpose`): run `git diff`, follow this skill. Return 1–2 sentences + reverted/fixed paths.
 
 ## Checks
 
@@ -23,3 +23,10 @@ Opt-in. **Never** after every `Write`. **Never** from a Plan todo named audit.
 4. NestJS: no Prisma in controllers; permissions from DB.
 5. Flutter: no `Platform.isX` hiding features; repository owns HTTP.
 6. ReadLints on edited files.
+
+## Act, do not only report
+
+- **Revert** drive-by / YAGNI (unrelated refactors, speculative layers).
+- **Fix in the diff** remaining rule defects: why-only comments, unused exports.
+- Do **not** merge unrelated domain mappers into one helper (same `code` in 2 screens → extract; different codes stay local — `dart-standards`).
+- Do not expand scope beyond the diff.
