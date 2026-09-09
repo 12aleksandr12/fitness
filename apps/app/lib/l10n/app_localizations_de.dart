@@ -365,4 +365,32 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get cancelFailed => 'Abmeldung vom Kurs fehlgeschlagen';
+
+  @override
+  String get permGroupSchedule => 'Stundenplan';
+
+  @override
+  String get permGroupBooking => 'Buchung';
+
+  @override
+  String get permGroupClients => 'Kunden';
+
+  @override
+  String get permGroupLedger => 'Guthaben';
+
+  @override
+  String get permGroupRoles => 'Rollen';
+
+  @override
+  String get rolesLoadFailed => 'Rollen konnten nicht geladen werden';
+
+  @override
+  String get lastManageRoles =>
+      'Das Studio braucht mindestens eine Rolle mit Rollenverwaltung';
+
+  @override
+  String get roleInUse => 'Die Rolle ist Benutzern zugewiesen';
+
+  @override
+  String get createRoleNeedPermission => 'Mindestens ein Recht auswählen';
 }

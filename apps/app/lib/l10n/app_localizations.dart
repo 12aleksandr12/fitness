@@ -759,6 +759,60 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Не удалось снять с занятия'**
   String get cancelFailed;
+
+  /// No description provided for @permGroupSchedule.
+  ///
+  /// In ru, this message translates to:
+  /// **'Расписание'**
+  String get permGroupSchedule;
+
+  /// No description provided for @permGroupBooking.
+  ///
+  /// In ru, this message translates to:
+  /// **'Запись'**
+  String get permGroupBooking;
+
+  /// No description provided for @permGroupClients.
+  ///
+  /// In ru, this message translates to:
+  /// **'Клиенты'**
+  String get permGroupClients;
+
+  /// No description provided for @permGroupLedger.
+  ///
+  /// In ru, this message translates to:
+  /// **'Баланс'**
+  String get permGroupLedger;
+
+  /// No description provided for @permGroupRoles.
+  ///
+  /// In ru, this message translates to:
+  /// **'Роли'**
+  String get permGroupRoles;
+
+  /// No description provided for @rolesLoadFailed.
+  ///
+  /// In ru, this message translates to:
+  /// **'Не удалось загрузить роли'**
+  String get rolesLoadFailed;
+
+  /// No description provided for @lastManageRoles.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нельзя оставить студию без права управлять ролями'**
+  String get lastManageRoles;
+
+  /// No description provided for @roleInUse.
+  ///
+  /// In ru, this message translates to:
+  /// **'Роль назначена пользователям'**
+  String get roleInUse;
+
+  /// No description provided for @createRoleNeedPermission.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отметьте хотя бы одно право'**
+  String get createRoleNeedPermission;
 }
 
 class _AppLocalizationsDelegate

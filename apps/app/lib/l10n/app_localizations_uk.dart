@@ -363,4 +363,32 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get cancelFailed => 'Не вдалося зняти із заняття';
+
+  @override
+  String get permGroupSchedule => 'Розклад';
+
+  @override
+  String get permGroupBooking => 'Запис';
+
+  @override
+  String get permGroupClients => 'Клієнти';
+
+  @override
+  String get permGroupLedger => 'Баланс';
+
+  @override
+  String get permGroupRoles => 'Ролі';
+
+  @override
+  String get rolesLoadFailed => 'Не вдалося завантажити ролі';
+
+  @override
+  String get lastManageRoles =>
+      'Не можна залишити студію без права керувати ролями';
+
+  @override
+  String get roleInUse => 'Роль призначена користувачам';
+
+  @override
+  String get createRoleNeedPermission => 'Позначте хоча б одне право';
 }

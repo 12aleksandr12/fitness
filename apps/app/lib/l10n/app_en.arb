@@ -108,5 +108,14 @@
   "noRoles": "No roles",
   "cancelTooLate": "Too late to cancel — inside the studio window",
   "notCancellable": "This booking cannot be cancelled (already checked in)",
-  "cancelFailed": "Could not remove from the class"
+  "cancelFailed": "Could not remove from the class",
+  "permGroupSchedule": "Schedule",
+  "permGroupBooking": "Booking",
+  "permGroupClients": "Clients",
+  "permGroupLedger": "Balance",
+  "permGroupRoles": "Roles",
+  "rolesLoadFailed": "Could not load roles",
+  "lastManageRoles": "The studio must keep at least one manage_roles grant",
+  "roleInUse": "This role is assigned to users",
+  "createRoleNeedPermission": "Select at least one permission"
 }

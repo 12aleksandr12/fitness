@@ -108,5 +108,14 @@
   "noRoles": "Aucun rôle",
   "cancelTooLate": "Trop tard pour annuler — dans le délai du studio",
   "notCancellable": "Cette réservation ne peut pas être annulée (déjà pointée)",
-  "cancelFailed": "Impossible de retirer du cours"
+  "cancelFailed": "Impossible de retirer du cours",
+  "permGroupSchedule": "Planning",
+  "permGroupBooking": "Réservation",
+  "permGroupClients": "Clients",
+  "permGroupLedger": "Solde",
+  "permGroupRoles": "Rôles",
+  "rolesLoadFailed": "Impossible de charger les rôles",
+  "lastManageRoles": "Le studio doit garder au moins un droit de gestion des rôles",
+  "roleInUse": "Ce rôle est attribué à des utilisateurs",
+  "createRoleNeedPermission": "Cochez au moins un droit"
 }

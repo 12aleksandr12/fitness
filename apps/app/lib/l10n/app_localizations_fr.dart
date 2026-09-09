@@ -366,4 +366,32 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cancelFailed => 'Impossible de retirer du cours';
+
+  @override
+  String get permGroupSchedule => 'Planning';
+
+  @override
+  String get permGroupBooking => 'Réservation';
+
+  @override
+  String get permGroupClients => 'Clients';
+
+  @override
+  String get permGroupLedger => 'Solde';
+
+  @override
+  String get permGroupRoles => 'Rôles';
+
+  @override
+  String get rolesLoadFailed => 'Impossible de charger les rôles';
+
+  @override
+  String get lastManageRoles =>
+      'Le studio doit garder au moins un droit de gestion des rôles';
+
+  @override
+  String get roleInUse => 'Ce rôle est attribué à des utilisateurs';
+
+  @override
+  String get createRoleNeedPermission => 'Cochez au moins un droit';
 }

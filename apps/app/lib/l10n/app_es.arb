@@ -108,5 +108,14 @@
   "noRoles": "No hay roles",
   "cancelTooLate": "Ya es tarde para cancelar — dentro del plazo del estudio",
   "notCancellable": "Esta reserva no se puede cancelar (ya se marcó la visita)",
-  "cancelFailed": "No se pudo quitar de la clase"
+  "cancelFailed": "No se pudo quitar de la clase",
+  "permGroupSchedule": "Horario",
+  "permGroupBooking": "Reservas",
+  "permGroupClients": "Clientes",
+  "permGroupLedger": "Saldo",
+  "permGroupRoles": "Roles",
+  "rolesLoadFailed": "No se pudieron cargar los roles",
+  "lastManageRoles": "El estudio debe conservar al menos un permiso de gestión de roles",
+  "roleInUse": "El rol está asignado a usuarios",
+  "createRoleNeedPermission": "Marca al menos un permiso"
 }

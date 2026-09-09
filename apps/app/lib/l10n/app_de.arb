@@ -108,5 +108,14 @@
   "noRoles": "Keine Rollen",
   "cancelTooLate": "Zu spät zum Stornieren — innerhalb der Studiofrist",
   "notCancellable": "Diese Buchung kann nicht storniert werden (bereits eingecheckt)",
-  "cancelFailed": "Abmeldung vom Kurs fehlgeschlagen"
+  "cancelFailed": "Abmeldung vom Kurs fehlgeschlagen",
+  "permGroupSchedule": "Stundenplan",
+  "permGroupBooking": "Buchung",
+  "permGroupClients": "Kunden",
+  "permGroupLedger": "Guthaben",
+  "permGroupRoles": "Rollen",
+  "rolesLoadFailed": "Rollen konnten nicht geladen werden",
+  "lastManageRoles": "Das Studio braucht mindestens eine Rolle mit Rollenverwaltung",
+  "roleInUse": "Die Rolle ist Benutzern zugewiesen",
+  "createRoleNeedPermission": "Mindestens ein Recht auswählen"
 }

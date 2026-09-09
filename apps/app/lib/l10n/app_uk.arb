@@ -108,5 +108,14 @@
   "noRoles": "Немає ролей",
   "cancelTooLate": "Вже пізно скасовувати — менше вікна студії",
   "notCancellable": "Цей запис не можна скасувати (візит уже відмічено)",
-  "cancelFailed": "Не вдалося зняти із заняття"
+  "cancelFailed": "Не вдалося зняти із заняття",
+  "permGroupSchedule": "Розклад",
+  "permGroupBooking": "Запис",
+  "permGroupClients": "Клієнти",
+  "permGroupLedger": "Баланс",
+  "permGroupRoles": "Ролі",
+  "rolesLoadFailed": "Не вдалося завантажити ролі",
+  "lastManageRoles": "Не можна залишити студію без права керувати ролями",
+  "roleInUse": "Роль призначена користувачам",
+  "createRoleNeedPermission": "Позначте хоча б одне право"
 }

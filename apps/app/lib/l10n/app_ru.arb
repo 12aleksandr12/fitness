@@ -172,6 +172,15 @@
   "cancelTooLate": "Уже поздно отменять — меньше окна отмены студии",
   "notCancellable": "Эту запись нельзя отменить (уже отмечен визит)",
   "cancelFailed": "Не удалось снять с занятия",
+  "permGroupSchedule": "Расписание",
+  "permGroupBooking": "Запись",
+  "permGroupClients": "Клиенты",
+  "permGroupLedger": "Баланс",
+  "permGroupRoles": "Роли",
+  "rolesLoadFailed": "Не удалось загрузить роли",
+  "lastManageRoles": "Нельзя оставить студию без права управлять ролями",
+  "roleInUse": "Роль назначена пользователям",
+  "createRoleNeedPermission": "Отметьте хотя бы одно право",
   "@cancelOtherMessage": {
     "placeholders": {
       "name": {"type": "String"}

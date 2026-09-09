@@ -18,8 +18,14 @@ class RolesRepository {
     await _dio.post('/roles', data: {'name': name, 'permissionSlugs': slugs});
   }
 
-  Future<void> update(String id, List<String> slugs) async {
-    await _dio.patch('/roles/$id', data: {'permissionSlugs': slugs});
+  Future<void> update(String id, {List<String>? slugs, String? name}) async {
+    await _dio.patch(
+      '/roles/$id',
+      data: {
+        if (slugs != null) 'permissionSlugs': slugs,
+        if (name != null) 'name': name,
+      },
+    );
   }
 
   Future<void> delete(String id) async {
