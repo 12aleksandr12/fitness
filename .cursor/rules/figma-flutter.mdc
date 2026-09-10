@@ -1,0 +1,41 @@
+---
+description: Figma MCP → Flutter — design context, ThemeExtension, no React/Tailwind paste
+alwaysApply: true
+---
+
+# Figma MCP → Flutter
+
+**Transport (куда ходить):**
+
+1. Официальный MCP — `https://mcp.figma.com/mcp` или desktop `127.0.0.1:3845`. Пока квота Starter жива — он.
+2. Если облако ответило `Starter plan` / rate limit — **gethopp/figma-mcp-bridge** (`figma-bridge` в `~/.cursor/mcp.json`). Читает открытый файл через Plugin API, не REST. Плагин должен быть запущен в Figma. Код моста **не** коммитить в этот репо.
+3. **Не подключать:** Framelink / Figma Context MCP / figma-flutter-mcp (тот же REST, тот же потолок); AlexZai007/figma-unlimited-mcp.
+
+Мост: `list_files` → те же шаги, что ниже (`get_metadata`, `get_design_context`, `get_screenshot`, `get_variable_defs`). Картинки — `get_screenshot` / `save_screenshots` (SVG/PNG), не выдумывать глифы.
+
+## Required flow (one frame per request)
+
+1. `get_metadata` if the frame is large or the page is unknown.
+2. `get_design_context` for that node (`fileKey` + `nodeId` with a colon: URL `9-3228` → `9:3228`).
+3. `get_screenshot` as the visual reference.
+4. `get_variable_defs` for colors, type, radii.
+5. Assets only from the payload. Use URLs as-is; no placeholder images; do not add icon packages.
+
+If a response is truncated, split: metadata → child nodes, never the whole file.
+
+## Translate, do not paste
+
+MCP output is usually React + Tailwind. It is a design spec, not code to commit.
+
+| MCP | This repo |
+|---|---|
+| Tailwind spacing | `EdgeInsets` / `SizedBox` / `Wrap` |
+| hex / Figma variables | `ThemeExtension` in `apps/app/lib/core/theme.dart` — never hardcode colors on screens |
+| Button / field | Material `FilledButton` / `TextField` + theme; no new UI kits |
+| Copy on the mockup | `AppLocalizations`, not string literals in widgets |
+| Nav | Existing `AppShell`: rail ≥900, bar &lt;900, same destinations |
+| Data | Feature `data/` + Riverpod; screens do not import `dio` |
+
+Tokens first, then widgets. Color-only Figma tweaks update the extension, not every screen.
+
+Adaptive: compact &lt;600 and expanded ≥900 (see `flutter-layout.mdc`). Density from width, never `if (Platform.isIOS) hide(feature)`.

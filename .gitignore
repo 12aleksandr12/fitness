@@ -21,3 +21,4 @@ apps/app/*.iml
 apps/app/.widget_preview/
 apps/api/uploads/*
 !apps/api/uploads/.gitkeep
+.figma-bridge/
