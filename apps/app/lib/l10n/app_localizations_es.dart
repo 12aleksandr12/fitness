@@ -394,4 +394,21 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get createRoleNeedPermission => 'Marca al menos un permiso';
+
+  @override
+  String get periodDay => 'Día';
+
+  @override
+  String get periodWeek => 'Semana';
+
+  @override
+  String get youAreBooked => 'Estás apuntado';
+
+  @override
+  String get noSpots => 'Sin plazas';
+
+  @override
+  String occupancyRatio(int booked, int capacity) {
+    return '$booked/$capacity';
+  }
 }

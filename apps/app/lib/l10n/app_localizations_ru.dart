@@ -390,4 +390,21 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get createRoleNeedPermission => 'Отметьте хотя бы одно право';
+
+  @override
+  String get periodDay => 'День';
+
+  @override
+  String get periodWeek => 'Неделя';
+
+  @override
+  String get youAreBooked => 'Вы записаны';
+
+  @override
+  String get noSpots => 'Нет мест';
+
+  @override
+  String occupancyRatio(int booked, int capacity) {
+    return '$booked/$capacity';
+  }
 }

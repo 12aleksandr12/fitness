@@ -117,5 +117,10 @@
   "rolesLoadFailed": "Rollen konnten nicht geladen werden",
   "lastManageRoles": "Das Studio braucht mindestens eine Rolle mit Rollenverwaltung",
   "roleInUse": "Die Rolle ist Benutzern zugewiesen",
-  "createRoleNeedPermission": "Mindestens ein Recht auswählen"
+  "createRoleNeedPermission": "Mindestens ein Recht auswählen",
+  "periodDay": "Tag",
+  "periodWeek": "Woche",
+  "youAreBooked": "Sie sind angemeldet",
+  "noSpots": "Keine Plätze",
+  "occupancyRatio": "{booked}/{capacity}"
 }

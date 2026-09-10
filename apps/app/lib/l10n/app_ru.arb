@@ -181,6 +181,17 @@
   "lastManageRoles": "Нельзя оставить студию без права управлять ролями",
   "roleInUse": "Роль назначена пользователям",
   "createRoleNeedPermission": "Отметьте хотя бы одно право",
+  "periodDay": "День",
+  "periodWeek": "Неделя",
+  "youAreBooked": "Вы записаны",
+  "noSpots": "Нет мест",
+  "occupancyRatio": "{booked}/{capacity}",
+  "@occupancyRatio": {
+    "placeholders": {
+      "booked": {"type": "int"},
+      "capacity": {"type": "int"}
+    }
+  },
   "@cancelOtherMessage": {
     "placeholders": {
       "name": {"type": "String"}

@@ -813,6 +813,36 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Отметьте хотя бы одно право'**
   String get createRoleNeedPermission;
+
+  /// No description provided for @periodDay.
+  ///
+  /// In ru, this message translates to:
+  /// **'День'**
+  String get periodDay;
+
+  /// No description provided for @periodWeek.
+  ///
+  /// In ru, this message translates to:
+  /// **'Неделя'**
+  String get periodWeek;
+
+  /// No description provided for @youAreBooked.
+  ///
+  /// In ru, this message translates to:
+  /// **'Вы записаны'**
+  String get youAreBooked;
+
+  /// No description provided for @noSpots.
+  ///
+  /// In ru, this message translates to:
+  /// **'Нет мест'**
+  String get noSpots;
+
+  /// No description provided for @occupancyRatio.
+  ///
+  /// In ru, this message translates to:
+  /// **'{booked}/{capacity}'**
+  String occupancyRatio(int booked, int capacity);
 }
 
 class _AppLocalizationsDelegate

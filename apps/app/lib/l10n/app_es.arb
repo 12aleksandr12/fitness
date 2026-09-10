@@ -117,5 +117,10 @@
   "rolesLoadFailed": "No se pudieron cargar los roles",
   "lastManageRoles": "El estudio debe conservar al menos un permiso de gestión de roles",
   "roleInUse": "El rol está asignado a usuarios",
-  "createRoleNeedPermission": "Marca al menos un permiso"
+  "createRoleNeedPermission": "Marca al menos un permiso",
+  "periodDay": "Día",
+  "periodWeek": "Semana",
+  "youAreBooked": "Estás apuntado",
+  "noSpots": "Sin plazas",
+  "occupancyRatio": "{booked}/{capacity}"
 }

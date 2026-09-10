@@ -13,10 +13,11 @@ Future<void> showSessionEditor({
   required BuildContext context,
   required WidgetRef ref,
   Map<String, dynamic>? session,
+  DateTime? initialStarts,
 }) async {
   final saved = await showDialog<bool>(
     context: context,
-    builder: (ctx) => SessionEditorDialog(session: session),
+    builder: (ctx) => SessionEditorDialog(session: session, initialStarts: initialStarts),
   );
   if (saved == true) {
     invalidateStudioWeek(ref);
@@ -24,9 +25,10 @@ Future<void> showSessionEditor({
 }
 
 class SessionEditorDialog extends ConsumerStatefulWidget {
-  const SessionEditorDialog({super.key, this.session});
+  const SessionEditorDialog({super.key, this.session, this.initialStarts});
 
   final Map<String, dynamic>? session;
+  final DateTime? initialStarts;
 
   @override
   ConsumerState<SessionEditorDialog> createState() => _SessionEditorDialogState();
@@ -74,8 +76,13 @@ class _SessionEditorDialogState extends ConsumerState<SessionEditorDialog> {
       _trainerId = session['trainerId'] as String? ??
           (session['trainer'] as Map<String, dynamic>?)?['id'] as String?;
     } else {
-      final tomorrow = DateTime.now().add(const Duration(days: 1));
-      _starts = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 10);
+      final seed = widget.initialStarts;
+      if (seed != null) {
+        _starts = DateTime(seed.year, seed.month, seed.day, seed.hour, seed.minute);
+      } else {
+        final tomorrow = DateTime.now().add(const Duration(days: 1));
+        _starts = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 10);
+      }
       _capacity.text = '8';
       _room.text = '';
     }

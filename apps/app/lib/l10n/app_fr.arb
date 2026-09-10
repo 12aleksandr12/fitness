@@ -117,5 +117,10 @@
   "rolesLoadFailed": "Impossible de charger les rôles",
   "lastManageRoles": "Le studio doit garder au moins un droit de gestion des rôles",
   "roleInUse": "Ce rôle est attribué à des utilisateurs",
-  "createRoleNeedPermission": "Cochez au moins un droit"
+  "createRoleNeedPermission": "Cochez au moins un droit",
+  "periodDay": "Jour",
+  "periodWeek": "Semaine",
+  "youAreBooked": "Vous êtes inscrit",
+  "noSpots": "Complet",
+  "occupancyRatio": "{booked}/{capacity}"
 }

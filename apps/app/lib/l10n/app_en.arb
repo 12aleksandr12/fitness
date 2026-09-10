@@ -117,5 +117,10 @@
   "rolesLoadFailed": "Could not load roles",
   "lastManageRoles": "The studio must keep at least one manage_roles grant",
   "roleInUse": "This role is assigned to users",
-  "createRoleNeedPermission": "Select at least one permission"
+  "createRoleNeedPermission": "Select at least one permission",
+  "periodDay": "Day",
+  "periodWeek": "Week",
+  "youAreBooked": "You're booked",
+  "noSpots": "No spots",
+  "occupancyRatio": "{booked}/{capacity}"
 }

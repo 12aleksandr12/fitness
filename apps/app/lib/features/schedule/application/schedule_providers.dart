@@ -28,6 +28,13 @@ final myBookingsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) asyn
   return ref.read(studioRepositoryProvider).myBookings();
 });
 
+final scheduleWeekViewProvider = StateProvider<bool>((ref) => true);
+
+final scheduleSelectedDayProvider = StateProvider<DateTime>((ref) {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month, now.day);
+});
+
 void invalidateStudioWeek(WidgetRef ref) {
   ref.invalidate(weekSessionsProvider);
   ref.invalidate(myBookingsProvider);
