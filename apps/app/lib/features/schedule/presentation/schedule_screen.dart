@@ -1,6 +1,5 @@
 import 'package:fitness_app/core/api_error.dart';
 import 'package:fitness_app/core/confirm_delete.dart';
-import 'package:fitness_app/core/language_picker.dart';
 import 'package:fitness_app/core/locale_controller.dart';
 import 'package:fitness_app/core/permissions.dart';
 import 'package:fitness_app/core/require_permission.dart';
@@ -8,6 +7,7 @@ import 'package:fitness_app/core/theme.dart';
 import 'package:fitness_app/core/user_avatar.dart';
 import 'package:fitness_app/features/auth/application/auth_controller.dart';
 import 'package:fitness_app/features/schedule/application/schedule_providers.dart';
+import 'package:fitness_app/features/schedule/presentation/schedule_week_grid.dart';
 import 'package:fitness_app/features/schedule/presentation/session_editor_dialog.dart';
 import 'package:fitness_app/features/schedule/presentation/session_log_dialog.dart';
 import 'package:fitness_app/l10n/app_localizations.dart';
@@ -23,43 +23,170 @@ class ScheduleScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(weekSessionsProvider);
     final l10n = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.schedule),
-        actions: [
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final expanded = Breakpoints.isExpanded(constraints);
+        return Scaffold(
+          body: async.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (e, _) => Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(l10n.scheduleLoadFailed),
+                  const SizedBox(height: 12),
+                  FilledButton(
+                    onPressed: () => invalidateStudioWeek(ref),
+                    child: Text(l10n.retry),
+                  ),
+                ],
+              ),
+            ),
+            data: (sessions) {
+              if (!expanded) {
+                return Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: RequirePermission(
+                        slug: Permissions.manageSchedule,
+                        child: IconButton(
+                          tooltip: l10n.newSession,
+                          icon: const Icon(Icons.add),
+                          onPressed: () => showSessionEditor(
+                            context: context,
+                            ref: ref,
+                            initialStarts: _startsOnSelectedDay(ref),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(child: ScheduleList(sessions: sessions)),
+                  ],
+                );
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const _ScheduleToolbar(),
+                  Expanded(child: ScheduleGrid(sessions: sessions)),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+DateTime _startsOnSelectedDay(WidgetRef ref) {
+  final day = ref.read(scheduleSelectedDayProvider);
+  return DateTime(day.year, day.month, day.day, 10);
+}
+
+class _ScheduleToolbar extends ConsumerWidget {
+  const _ScheduleToolbar();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final tokens = FitroomTokens.of(context);
+    final loc = (ref.watch(localeControllerProvider).valueOrNull ?? const Locale('ru')).toString();
+    final selected = ref.watch(scheduleSelectedDayProvider);
+    final weekView = ref.watch(scheduleWeekViewProvider);
+    final dateLabel = DateFormat('EEEE d MMMM', loc).format(selected).toUpperCase();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              dateLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: tokens.ink, fontSize: 16, fontWeight: FontWeight.w700),
+            ),
+          ),
           RequirePermission(
             slug: Permissions.manageSchedule,
             child: IconButton(
               tooltip: l10n.newSession,
-              icon: const Icon(Icons.add),
-              onPressed: () => showSessionEditor(context: context, ref: ref),
+              icon: Icon(Icons.add, color: tokens.ink),
+              onPressed: () => showSessionEditor(
+                context: context,
+                ref: ref,
+                initialStarts: _startsOnSelectedDay(ref),
+              ),
             ),
           ),
-          const AppBarActions(),
+          _PeriodToggle(
+            weekView: weekView,
+            onDay: () => ref.read(scheduleWeekViewProvider.notifier).state = false,
+            onWeek: () => ref.read(scheduleWeekViewProvider.notifier).state = true,
+          ),
         ],
       ),
-      body: async.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(l10n.scheduleLoadFailed),
-              const SizedBox(height: 12),
-              FilledButton(
-                onPressed: () => invalidateStudioWeek(ref),
-                child: Text(l10n.retry),
-              ),
-            ],
+    );
+  }
+}
+
+class _PeriodToggle extends StatelessWidget {
+  const _PeriodToggle({
+    required this.weekView,
+    required this.onDay,
+    required this.onWeek,
+  });
+
+  final bool weekView;
+  final VoidCallback onDay;
+  final VoidCallback onWeek;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _PeriodChip(label: l10n.periodDay, selected: !weekView, onTap: onDay),
+        _PeriodChip(label: l10n.periodWeek, selected: weekView, onTap: onWeek),
+      ],
+    );
+  }
+}
+
+class _PeriodChip extends StatelessWidget {
+  const _PeriodChip({required this.label, required this.selected, required this.onTap});
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = FitroomTokens.of(context);
+    return Material(
+      color: selected ? tokens.yellow : Colors.transparent,
+      borderRadius: BorderRadius.circular(tokens.radius),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(tokens.radius),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          decoration: BoxDecoration(
+            border: Border.all(color: tokens.yellow),
+            borderRadius: BorderRadius.circular(tokens.radius),
           ),
-        ),
-        data: (sessions) => LayoutBuilder(
-          builder: (context, constraints) {
-            if (Breakpoints.isExpanded(constraints)) {
-              return ScheduleGrid(sessions: sessions);
-            }
-            return ScheduleList(sessions: sessions);
-          },
+          child: Text(
+            label.toUpperCase(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: selected ? tokens.onYellow : tokens.ink,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ),
       ),
     );
@@ -77,51 +204,6 @@ class ScheduleList extends ConsumerWidget {
     return ListView.builder(
       itemCount: sessions.length,
       itemBuilder: (context, i) => SessionTile(session: sessions[i], timeText: fmt.format(DateTime.parse(sessions[i]['startsAt'] as String).toLocal())),
-    );
-  }
-}
-
-class ScheduleGrid extends ConsumerWidget {
-  const ScheduleGrid({super.key, required this.sessions});
-  final List<Map<String, dynamic>> sessions;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final loc = (ref.watch(localeControllerProvider).valueOrNull ?? const Locale('ru')).toString();
-    final fmt = DateFormat('HH:mm', loc);
-    final byDay = <String, List<Map<String, dynamic>>>{};
-    for (final s in sessions) {
-      final d = DateTime.parse(s['startsAt'] as String).toLocal();
-      final key = DateFormat('yyyy-MM-dd').format(d);
-      byDay.putIfAbsent(key, () => []).add(s);
-    }
-    final days = byDay.keys.toList()..sort();
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        for (final day in days)
-          Expanded(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(DateFormat('EEE d MMM', loc).format(DateTime.parse(day))),
-                ),
-                Expanded(
-                  child: ListView(
-                    children: [
-                      for (final s in byDay[day]!)
-                        SessionTile(
-                          session: s,
-                          timeText: fmt.format(DateTime.parse(s['startsAt'] as String).toLocal()),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-      ],
     );
   }
 }
