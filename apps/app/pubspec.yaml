@@ -17,6 +17,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   intl: ^0.20.2
   image_picker: ^1.2.3
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -26,3 +27,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/figma/

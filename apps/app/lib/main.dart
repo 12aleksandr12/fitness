@@ -22,10 +22,13 @@ class FitnessApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     final locale = ref.watch(localeControllerProvider).valueOrNull ?? const Locale('ru');
+    final themeMode = ref.watch(themeModeProvider);
     return MaterialApp.router(
       title: 'Fitness',
       debugShowCheckedModeBanner: false,
-      theme: buildTheme(),
+      theme: buildTheme(Brightness.light),
+      darkTheme: buildTheme(Brightness.dark),
+      themeMode: themeMode,
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
