@@ -23,7 +23,6 @@ class CabinetScreen extends ConsumerWidget {
     final passes = ref.watch(myPassesProvider);
     final ledger = ref.watch(myLedgerProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.cabinet), actions: const [AppBarActions()]),
       body: passes.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(child: Text(l10n.noData)),

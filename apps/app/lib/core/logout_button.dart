@@ -4,14 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LogoutButton extends ConsumerWidget {
-  const LogoutButton({super.key, this.filled = false});
+  const LogoutButton({super.key, this.filled = false, this.iconOnly = false});
 
   final bool filled;
+  final bool iconOnly;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     void exit() => ref.read(authControllerProvider.notifier).logout();
+    if (iconOnly) {
+      return IconButton(
+        tooltip: l10n.logout,
+        onPressed: exit,
+        icon: const Icon(Icons.logout),
+      );
+    }
     if (filled) {
       return FilledButton.icon(
         onPressed: exit,

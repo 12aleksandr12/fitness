@@ -1,6 +1,5 @@
 import 'package:fitness_app/core/api_error.dart';
 import 'package:fitness_app/core/confirm_delete.dart';
-import 'package:fitness_app/core/language_picker.dart';
 import 'package:fitness_app/core/permissions.dart';
 import 'package:fitness_app/features/roles/application/roles_providers.dart';
 import 'package:fitness_app/l10n/app_localizations.dart';
@@ -257,18 +256,19 @@ class _RolesScreenState extends ConsumerState<RolesScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.roles),
-        actions: [
-          IconButton(
-            tooltip: l10n.createRole,
-            icon: const Icon(Icons.add),
-            onPressed: () => setState(() => _drafting = true),
+      body: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              tooltip: l10n.createRole,
+              icon: const Icon(Icons.add),
+              onPressed: () => setState(() => _drafting = true),
+            ),
           ),
-          const AppBarActions(),
+          Expanded(child: _body(l10n)),
         ],
       ),
-      body: _body(l10n),
     );
   }
 

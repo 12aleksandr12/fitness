@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:fitness_app/core/confirm_delete.dart';
-import 'package:fitness_app/core/language_picker.dart';
 import 'package:fitness_app/core/permissions.dart';
 import 'package:fitness_app/core/require_permission.dart';
 import 'package:fitness_app/core/user_avatar.dart';
@@ -191,10 +190,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final name = profile?['name'] as String? ?? '';
     final email = profile?['email'] as String?;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isSelf ? l10n.profile : (name.isEmpty ? l10n.member : name)),
-        actions: const [AppBarActions()],
-      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : profile == null
